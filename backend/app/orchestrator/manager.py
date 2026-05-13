@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import asyncio
 import contextlib
+import hashlib
+import json
 import logging
 import re
 import time
@@ -45,6 +47,13 @@ class Orchestrator:
         # doesn't flap the status of all the others. Cleared only on permanent
         # proxy failure or when a server is removed from _known_server_ids.
         self._running_servers: set[str] = set()
+        # Hash of (config + bearer) that's currently applied to mcp-proxy.
+        # Reconciles compare against this to skip redundant stop+start cycles.
+        self._applied_config_hash: str | None = None
+        # When True, the next proxy exit is expected (we requested it).
+        # Prevents _await_exit from logging a failure and scheduling a
+        # cascade of reconciles when we SIGTERM the proxy on purpose.
+        self._intentional_stop: bool = False
         self._http: httpx.AsyncClient | None = None
 
     # ---- lifecycle ----
@@ -141,17 +150,37 @@ class Orchestrator:
             await self._stop_proxy()
             self._known_server_ids = set()
             self._running_servers = set()
+            self._applied_config_hash = None
+            return
+
+        # Compute a stable hash over the config and bearer. If nothing has
+        # actually changed since the last successful start and the proxy is
+        # still alive, this reconcile is a no-op. This prevents back-to-back
+        # request_reconcile() calls (or stray events) from killing and
+        # restarting mcp-proxy unnecessarily.
+        config_blob = json.dumps(config, sort_keys=True) + "::" + (bearer or "")
+        new_hash = hashlib.sha256(config_blob.encode()).hexdigest()
+        if (
+            new_hash == self._applied_config_hash
+            and self._proc is not None
+            and self._proc.running
+            and self._proxy_state == "running"
+        ):
+            # Make sure the in-memory sets are consistent, but don't restart.
+            self._known_server_ids = new_ids
+            self._running_servers = set(new_ids)
             return
 
         write_proxy_config(self.config_path, config)
 
-        # If proxy is already running with the same set of servers, just restart to pick up config changes.
         await self._stop_proxy()
         # Drop any disabled servers from the optimistic running set, but keep
         # the rest so their UI doesn't flap to "starting" during this brief restart.
         self._running_servers &= new_ids
         self._known_server_ids = new_ids
         await self._start_proxy(bearer)
+        if self._proxy_state == "running":
+            self._applied_config_hash = new_hash
 
     async def _read_bearer(self, db) -> str:
         from app.api.token import TOKEN_KEY
@@ -190,6 +219,9 @@ class Orchestrator:
 
         self._proxy_state = "starting"
         self._proxy_started_at = None
+        # Reset the intentional-stop flag. Any subsequent exit of this fresh
+        # proc that we haven't asked for is a real failure.
+        self._intentional_stop = False
         proc = SupervisedProcess(argv, env=env, on_line=self._on_proxy_line)
         try:
             await proc.start()
@@ -229,6 +261,12 @@ class Orchestrator:
     async def _stop_proxy(self) -> None:
         if self._proc is None:
             return
+        # Mark this stop as intentional BEFORE sending SIGTERM. There's a race
+        # between this function and _await_exit (both await proc.wait on the
+        # same process). If _await_exit gets scheduled first when the proc
+        # dies, it will check this flag, see True, and return without firing
+        # a failure-driven reconcile.
+        self._intentional_stop = True
         try:
             await self._proc.stop(timeout=5.0)
         except Exception:
@@ -245,12 +283,20 @@ class Orchestrator:
     async def _await_exit(self) -> None:
         assert self._proc is not None
         rc = await self._proc.wait()
-        log.warning("mcp-proxy exited rc=%s", rc)
         self._proxy_state = "stopped"
         self._proxy_started_at = None
+        # If we asked for this stop (config reload, restart button, etc.),
+        # don't treat it as a failure. Otherwise we'd record a failure for
+        # every routine config change and oscillate via the backoff retry.
+        if self._intentional_stop:
+            log.info("mcp-proxy exited rc=%s (intentional)", rc)
+            return
+        log.warning("mcp-proxy exited unexpectedly rc=%s", rc)
         if rc != 0:
             self._failures.append(time.time())
-            # Auto-restart by triggering reconcile
+            # Invalidate applied-config hash so the next reconcile actually
+            # restarts (rather than thinking everything is still in place).
+            self._applied_config_hash = None
             await asyncio.sleep(min(2 ** len(self._failures), 16))
             await self.request_reconcile()
 
