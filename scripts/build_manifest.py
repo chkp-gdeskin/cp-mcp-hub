@@ -124,6 +124,71 @@ HEADING = re.compile(r"^(#{1,6})\s+(.+?)\s*$")
 SKIP_NAMES = {"TELEMETRY_DISABLED", "MCP_TRANSPORT_TYPE", "MCP_TRANSPORT_PORT"}
 
 
+def _make_env(name: str, desc: str = "") -> EnvVar:
+    type_, secret = classify_env(name, desc)
+    default_match = DEFAULT_HINT.search(desc) if desc else None
+    default = default_match.group(1).strip() if default_match else None
+    required = bool(REQUIRED_HINT.search(desc)) and default is None if desc else False
+    return EnvVar(
+        name=name,
+        label=humanize(name.lower()),
+        type=type_,
+        required=required,
+        secret=secret,
+        description=desc,
+        default=default,
+    )
+
+
+def _extract_env_from_json_examples(readme: str) -> dict[str, str]:
+    """Scan fenced JSON blocks for mcpServers.*.env keys.
+
+    Some upstream READMEs document env vars only in their Basic Configuration
+    Example JSON, not in a bullet list. This catches those. Returns a map of
+    env var name -> example value (so we can synthesize a description from
+    placeholder text like 'your-client-id').
+    """
+    found: dict[str, str] = {}
+    lines = readme.splitlines()
+    in_json = False
+    buf: list[str] = []
+    for line in lines:
+        stripped = line.strip()
+        if stripped.startswith("```"):
+            if in_json and buf:
+                try:
+                    data = json.loads("\n".join(buf))
+                except json.JSONDecodeError:
+                    pass
+                else:
+                    _harvest_env_from_obj(data, found)
+            in_json = stripped.lower().startswith("```json")
+            buf = []
+            continue
+        if in_json:
+            buf.append(line)
+    return found
+
+
+def _harvest_env_from_obj(data: object, found: dict[str, str]) -> None:
+    """Walk a parsed JSON tree looking for any object literally named 'env'
+    whose values are scalar (env-var-like). Also handles the typical
+    mcpServers shape: { "mcpServers": { "<name>": { "env": {...} } } }
+    """
+    if isinstance(data, dict):
+        for key, val in data.items():
+            if key == "env" and isinstance(val, dict):
+                for k, v in val.items():
+                    if isinstance(k, str) and re.match(r"^[A-Z][A-Z0-9_]{2,}$", k):
+                        if k not in found:
+                            found[k] = str(v) if not isinstance(v, (dict, list)) else ""
+            else:
+                _harvest_env_from_obj(val, found)
+    elif isinstance(data, list):
+        for item in data:
+            _harvest_env_from_obj(item, found)
+
+
 def parse_env_vars(readme: str) -> list[EnvVar]:
     seen: dict[str, EnvVar] = {}
     in_fence = False
@@ -141,19 +206,20 @@ def parse_env_vars(readme: str) -> list[EnvVar]:
             continue
         # Trim trailing punctuation/markdown from description
         desc = re.sub(r"\s{2,}$", "", desc).rstrip()
-        type_, secret = classify_env(name, desc)
-        default_match = DEFAULT_HINT.search(desc)
-        default = default_match.group(1).strip() if default_match else None
-        required = bool(REQUIRED_HINT.search(desc)) and default is None
-        seen[name] = EnvVar(
-            name=name,
-            label=humanize(name.lower()),
-            type=type_,
-            required=required,
-            secret=secret,
-            description=desc,
-            default=default,
-        )
+        seen[name] = _make_env(name, desc)
+
+    # Fallback: env vars documented only in JSON example blocks
+    json_env = _extract_env_from_json_examples(readme)
+    for name, example in json_env.items():
+        if name in SKIP_NAMES or name in seen:
+            continue
+        # Synthesize a description from the placeholder ("your-client-id" -> ...)
+        if example and example.lower() not in {"", "none", "null"}:
+            desc = f"Example: {example}"
+        else:
+            desc = ""
+        seen[name] = _make_env(name, desc)
+
     return list(seen.values())
 
 

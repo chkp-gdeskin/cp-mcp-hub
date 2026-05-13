@@ -1,6 +1,6 @@
 {
   "version": "1",
-  "generated_at": "2026-05-13T17:55:08+00:00",
+  "generated_at": "2026-05-13T20:31:23+00:00",
   "source_commit": "99ac2207f6e749d02d6052f2ded1d963569089a5",
   "servers": [
     {
@@ -18,6 +18,24 @@
           "required": true,
           "secret": false,
           "description": "Your Argos customer ID (required for all API calls)",
+          "default": null
+        },
+        {
+          "name": "ARGOS_HOST",
+          "label": "Argos Host",
+          "type": "url",
+          "required": false,
+          "secret": false,
+          "description": "Example: https://your-argos-instance.com",
+          "default": null
+        },
+        {
+          "name": "ARGOS_API_KEY",
+          "label": "Argos Api Key",
+          "type": "password",
+          "required": false,
+          "secret": true,
+          "description": "Example: your-api-key-here",
           "default": null
         }
       ],
@@ -39,6 +57,15 @@
           "secret": false,
           "description": "Override the idle eviction window (default: 10,800,000 ms \u2248 3 hours).",
           "default": "10,800,000 ms \u2248 3 hours"
+        },
+        {
+          "name": "LOG_LEVEL",
+          "label": "Log Level",
+          "type": "string",
+          "required": false,
+          "secret": false,
+          "description": "Example: info",
+          "default": null
         }
       ],
       "cli_args": []
@@ -555,7 +582,35 @@
       "description": "Query and analyze gateway configurations and status. Retrieve device information including software versions, connectivity status, and hardware details.",
       "doc_url": "https://github.com/CheckPointSW/mcp-servers/tree/main/packages/spark-management",
       "icon": "shield",
-      "env_vars": [],
+      "env_vars": [
+        {
+          "name": "CLIENT_ID",
+          "label": "Client Id",
+          "type": "string",
+          "required": false,
+          "secret": false,
+          "description": "Example: your-client-id",
+          "default": null
+        },
+        {
+          "name": "SECRET_KEY",
+          "label": "Secret Key",
+          "type": "password",
+          "required": false,
+          "secret": true,
+          "description": "Example: your-secret-key",
+          "default": null
+        },
+        {
+          "name": "INFINITY_PORTAL_URL",
+          "label": "Infinity Portal Url",
+          "type": "url",
+          "required": false,
+          "secret": false,
+          "description": "Example: YOUR_AUTH_URL",
+          "default": null
+        }
+      ],
       "cli_args": []
     },
     {
