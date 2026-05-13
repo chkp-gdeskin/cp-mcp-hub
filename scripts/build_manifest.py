@@ -119,6 +119,7 @@ DEFAULT_HINT = re.compile(r"\(default:?\s*([^)]+)\)", re.I)
 # Match either "- `VAR`: desc" or "`VAR`: desc" forms
 ENV_LINE = re.compile(r"^\s*(?:[-*]\s+)?\**\s*`([A-Z][A-Z0-9_]{2,})`\**\s*[:\-]\s*(.+?)\s*$")
 FENCE = re.compile(r"^\s*```")
+HEADING = re.compile(r"^(#{1,6})\s+(.+?)\s*$")
 # Skip these — they are documentation about telemetry/transport, not user-configurable
 SKIP_NAMES = {"TELEMETRY_DISABLED", "MCP_TRANSPORT_TYPE", "MCP_TRANSPORT_PORT"}
 
@@ -156,15 +157,81 @@ def parse_env_vars(readme: str) -> list[EnvVar]:
     return list(seen.values())
 
 
+GENERIC_BOILERPLATE = re.compile(
+    r"\b(Model Context Protocol|MCP servers? expose|machine-readable API)\b", re.I
+)
+
+
+def _clean_text(s: str) -> str:
+    """Strip markdown emphasis, links, leading list markers; collapse whitespace."""
+    # Markdown bold/italic emphasis: **x**, __x__, *x*, _x_
+    s = re.sub(r"\*\*(.+?)\*\*", r"\1", s)
+    s = re.sub(r"__(.+?)__", r"\1", s)
+    s = re.sub(r"(?<!\w)\*(.+?)\*(?!\w)", r"\1", s)
+    s = re.sub(r"(?<!\w)_(.+?)_(?!\w)", r"\1", s)
+    # Markdown links: [text](url) -> text
+    s = re.sub(r"\[([^\]]+)\]\([^)]+\)", r"\1", s)
+    # Inline code: `x` -> x
+    s = re.sub(r"`([^`]+)`", r"\1", s)
+    # Leading list/number marker: "1. ", "2) ", "- ", "* "
+    s = re.sub(r"^\s*(?:\d+[.)]|[-*])\s+", "", s)
+    # Collapse whitespace
+    s = re.sub(r"\s+", " ", s).strip()
+    # Drop trailing punctuation chains
+    s = s.rstrip(".,;: -")
+    return s
+
+
+def _extract_features(readme: str) -> list[str]:
+    """Pull bullet points from a `## Features` (or similar) section."""
+    lines = readme.splitlines()
+    in_section = False
+    section_level: int | None = None
+    bullets: list[str] = []
+    for line in lines:
+        m = HEADING.match(line)
+        if m:
+            level = len(m.group(1))
+            heading = m.group(2).strip().lower()
+            if section_level is None:
+                if heading in {"features", "capabilities", "what it does"}:
+                    in_section = True
+                    section_level = level
+            elif level <= section_level:
+                break
+            continue
+        if not in_section:
+            continue
+        # Match bulleted (- *) or numbered (1. 2) ) list items
+        bm = re.match(r"^\s*(?:\d+[.)]|[-*])\s+(.+?)\s*$", line)
+        if bm:
+            text = _clean_text(bm.group(1))
+            if text:
+                bullets.append(text)
+    return bullets
+
+
 def extract_description(readme: str) -> str:
+    # Preferred: features bullets, which describe THIS specific server
+    bullets = _extract_features(readme)
+    if bullets:
+        head = bullets[0]
+        if len(bullets) > 1 and len(head) < 90:
+            return f"{head}. {bullets[1]}."
+        return head + "."
+
+    # Fallback: first non-boilerplate paragraph
     for block in readme.split("\n\n"):
         block = block.strip()
         if not block or block.startswith("#") or block.startswith("```") or block.startswith("!["):
             continue
         first_line = block.splitlines()[0]
-        if first_line.startswith(("[", "|", "<")):
+        if first_line.startswith(("[", "|", "<", ">")):
             continue
-        return " ".join(block.splitlines()).strip()
+        text = _clean_text(" ".join(block.splitlines()))
+        if GENERIC_BOILERPLATE.search(text):
+            continue
+        return text
     return ""
 
 
