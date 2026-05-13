@@ -6,7 +6,12 @@
 </p>
 
 <p align="center">
+  Powered by the official <a href="https://github.com/CheckPointSW/mcp-servers"><b>CheckPointSW/mcp-servers</b></a> package set.
+</p>
+
+<p align="center">
   <a href="https://hub.docker.com/r/aaronroseio/cp-mcp-hub"><img alt="Docker Hub" src="https://img.shields.io/badge/docker-aaronroseio%2Fcp--mcp--hub-2496ED?logo=docker&logoColor=white"></a>
+  <a href="https://github.com/CheckPointSW/mcp-servers"><img alt="Upstream" src="https://img.shields.io/badge/upstream-CheckPointSW%2Fmcp--servers-181717?logo=github&logoColor=white"></a>
   <img alt="Architecture" src="https://img.shields.io/badge/arch-amd64%20%7C%20arm64-lightgrey">
   <a href="https://github.com/chkp-arose/cp-mcp-hub/blob/main/LICENSE"><img alt="License" src="https://img.shields.io/badge/license-Apache--2.0-blue"></a>
 </p>
@@ -17,9 +22,46 @@
 
 ---
 
-## 🚀 Quickstart (3 commands)
+## 🤔 Before you start: pick your deployment
 
-You need Docker. That's it.
+This tool runs in a Docker container. Where you put that container changes one important thing: whether you need HTTPS.
+
+<table>
+<tr>
+<th>👉 Option A — Run on your own laptop</th>
+<th>🌐 Option B — Run on another machine (NAS, home server, VPS)</th>
+</tr>
+<tr>
+<td valign="top">
+
+You run Docker on the same machine where you use Claude. You open the UI at <code>http://localhost:8090</code> in your browser.
+
+- **Easiest setup.** No certificates, no hostnames.
+- Plain <b>HTTP is fine</b> because the browser treats <code>localhost</code> as trusted.
+- Best for: trying it out, single-user workflows on one laptop.
+
+➡️ Follow the **[Quickstart](#-quickstart)** below as-is.
+
+</td>
+<td valign="top">
+
+The container runs somewhere else and you connect to it from a different machine.
+
+- You need <b>HTTPS</b> because Claude Desktop and Claude Code refuse plain HTTP for remote URLs.
+- The hub can generate a self-signed certificate for you — one extra environment variable.
+- Best for: home labs, team shared deployments, anything reachable from more than one device.
+
+➡️ Follow the **[Quickstart](#-quickstart)** below, then **[Enable HTTPS](#enable-https-self-signed)** before connecting Claude.
+
+</td>
+</tr>
+</table>
+
+---
+
+## 🚀 Quickstart
+
+You need [Docker](https://www.docker.com/products/docker-desktop/). That's it. Three commands.
 
 ```bash
 # 1. Generate a master encryption key (save this somewhere safe!)
@@ -38,11 +80,13 @@ open http://localhost:8090     # macOS
 # or visit http://localhost:8090 in your browser
 ```
 
-**First login:** `admin` / `admin`. You'll be required to set a new password (min 12 chars).
+**First login:** `admin` / `admin`. You'll be required to set a new password (min 12 characters).
 
-> 💡 **Save your `MASTER_KEY` out of band** (password manager, 1Password, etc). Losing it means re-entering every credential.
+> 💡 **Save your `MASTER_KEY` somewhere safe** (password manager, 1Password, etc). If you lose it, you'll have to re-enter every credential — there's no way to recover the encrypted data without it.
 
-> 🔀 **Port already in use?** The `-p 8090:8000` flag maps host port **8090** to container port **8000**. If 8090 is taken on your machine, change the host side (left number) to any free port, for example `-p 9090:8000`, then open `http://localhost:9090` instead. Keep the container side (right number) at `8000`.
+> 🔀 **Port `8090` already in use?** The `-p 8090:8000` flag maps **port 8090 on your computer** to **port 8000 inside the container**. If 8090 is taken, change the number on the left, e.g. `-p 9090:8000`, then open `http://localhost:9090` instead. Keep `8000` on the right alone.
+
+> 🌐 **Running on another machine?** After the steps above work, go to **[Enable HTTPS](#enable-https-self-signed)** to add a certificate so Claude Desktop will accept the connection.
 
 ---
 
