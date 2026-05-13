@@ -134,6 +134,26 @@ A starter compose file is included. See [`docker-compose.example.yml`](https://g
 docker compose -f docker-compose.example.yml up -d
 ```
 
+### Enable HTTPS (self-signed)
+
+Claude Desktop / Claude Code reject plain HTTP for any URL that isn't `localhost`. If you're running the hub on another machine (NAS, home server, VPS, etc.) and want to connect from your laptop, you need HTTPS.
+
+The fastest path: flip on the built-in TLS mode. The container generates a self-signed cert on first boot (persisted in your `/data` volume so it survives restarts).
+
+```bash
+docker run -d --name cp-mcp-hub \
+  -e MASTER_KEY='paste-your-key-here' \
+  -e ENABLE_TLS=true \
+  -e TLS_HOSTNAMES='localhost,127.0.0.1,my-server.local,192.168.1.50' \
+  -v cp-mcp-hub-data:/data \
+  -p 8090:8000 \
+  aaronroseio/cp-mcp-hub:latest
+```
+
+Open `https://my-server.local:8090` in your browser. You'll get a "Not secure" warning — that's expected for a self-signed cert. Click through (Advanced → Proceed) or, for a cleaner setup, import `/data/tls/cert.pem` into your machine's trust store.
+
+The on-screen Claude Desktop / Claude Code snippets on each server detail page automatically detect HTTPS and inject `NODE_TLS_REJECT_UNAUTHORIZED=0` so `mcp-remote` accepts the cert. For a stronger setup, see the next section.
+
 ### Behind a reverse proxy (Caddy, Traefik, Tailscale Serve, etc.)
 
 The UI has **no built-in TLS or extra auth** beyond the single admin user. **Do not expose the hub directly to the internet.** Put it behind a proxy that terminates TLS and adds another auth layer.
@@ -164,6 +184,10 @@ docker run -d --name cp-mcp-hub \
 | `DATA_DIR`           | no       | `/data`                                          | DB + per-server log files live here. |
 | `MANIFEST_PATH`      | no       | `/app/server_definitions.json`                   | Manifest of all known `@chkp/*-mcp` servers. |
 | `EXTERNAL_BASE_URL`  | no       | (empty)                                          | If set, the UI displays this in SSE URL copy fields. e.g. `https://mcp.example.com`. |
+| `ENABLE_TLS`         | no       | `false`                                          | Serve uvicorn over HTTPS with a self-signed cert. Required for Claude Desktop / Claude Code over a remote URL. |
+| `TLS_HOSTNAMES`      | no       | `localhost,127.0.0.1`                            | Comma-separated DNS names and IPs to embed in the cert's SAN list. Add your LAN hostname / IP here. |
+| `TLS_CERT_PATH`      | no       | `$DATA_DIR/tls/cert.pem`                         | Override only if mounting an externally-generated cert. |
+| `TLS_KEY_PATH`       | no       | `$DATA_DIR/tls/key.pem`                          | Override only if mounting an externally-generated key. |
 | `LOG_LEVEL`          | no       | `INFO`                                           | Standard Python log level. |
 
 ---

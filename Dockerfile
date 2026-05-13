@@ -76,6 +76,7 @@ COPY --from=frontend /app/frontend/dist /app/backend/static
 COPY server_definitions.json /app/server_definitions.json
 COPY scripts/entrypoint.sh /entrypoint.sh
 COPY scripts/healthcheck.sh /healthcheck.sh
+COPY scripts/gen_tls.py /app/scripts/gen_tls.py
 RUN chmod +x /entrypoint.sh /healthcheck.sh \
  && mkdir -p /data \
  && chown -R cpmcp:cpmcp /data /app

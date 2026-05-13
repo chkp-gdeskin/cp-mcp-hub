@@ -20,29 +20,36 @@ type Mode = "desktop" | "code";
 export function ConnectSnippet({ serverId, sseUrl, token }: Props) {
   const [mode, setMode] = useState<Mode>("desktop");
 
+  // If the user has enabled TLS on the hub, the URL will be https://...
+  // with a self-signed cert. mcp-remote (Node) rejects self-signed certs
+  // by default, so we need to inject NODE_TLS_REJECT_UNAUTHORIZED=0 into
+  // the bridge process. Same for the Claude Code one-liner.
+  const isHttps = !!sseUrl && sseUrl.startsWith("https://");
+  const isSelfSigned = isHttps; // assume self-signed unless we know otherwise
+
   const desktopJson = useMemo(() => {
     if (!sseUrl || !token) return "";
-    const obj = {
-      mcpServers: {
-        [`cp-${serverId}`]: {
-          command: "npx",
-          args: [
-            "-y",
-            "mcp-remote",
-            sseUrl,
-            "--header",
-            `Authorization: Bearer ${token}`,
-          ],
-        },
-      },
+    const entry: Record<string, unknown> = {
+      command: "npx",
+      args: [
+        "-y",
+        "mcp-remote",
+        sseUrl,
+        "--header",
+        `Authorization: Bearer ${token}`,
+      ],
     };
-    return JSON.stringify(obj, null, 2);
-  }, [serverId, sseUrl, token]);
+    if (isSelfSigned) {
+      entry.env = { NODE_TLS_REJECT_UNAUTHORIZED: "0" };
+    }
+    return JSON.stringify({ mcpServers: { [`cp-${serverId}`]: entry } }, null, 2);
+  }, [serverId, sseUrl, token, isSelfSigned]);
 
   const codeCommand = useMemo(() => {
     if (!sseUrl || !token) return "";
-    return `claude mcp add cp-${serverId} \\\n  --transport sse \\\n  --header "Authorization: Bearer ${token}" \\\n  ${sseUrl}`;
-  }, [serverId, sseUrl, token]);
+    const prefix = isSelfSigned ? "NODE_TLS_REJECT_UNAUTHORIZED=0 " : "";
+    return `${prefix}claude mcp add cp-${serverId} \\\n  --transport sse \\\n  --header "Authorization: Bearer ${token}" \\\n  ${sseUrl}`;
+  }, [serverId, sseUrl, token, isSelfSigned]);
 
   const active = mode === "desktop" ? desktopJson : codeCommand;
   const ready = !!sseUrl && !!token;
@@ -79,6 +86,14 @@ export function ConnectSnippet({ serverId, sseUrl, token }: Props) {
         ) : (
           <p className="text-xs text-muted-foreground leading-relaxed">
             Run in your terminal. Verify with <code className="font-mono">claude mcp list</code>.
+          </p>
+        )}
+
+        {isSelfSigned && (
+          <p className="text-xs text-warning-foreground bg-warning/15 rounded px-2 py-1.5 leading-relaxed">
+            <strong>Self-signed TLS:</strong> the snippet includes{" "}
+            <code className="font-mono">NODE_TLS_REJECT_UNAUTHORIZED=0</code>{" "}
+            so the client accepts the hub's self-signed cert. For a stronger setup, install the hub's certificate into your system trust store or front the hub with a reverse proxy that has a real cert.
           </p>
         )}
       </CardContent>
