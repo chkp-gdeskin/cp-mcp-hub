@@ -3,7 +3,7 @@
 #        docker run --rm aaronroseio/cp-mcp-hub:latest generate-key
 #   2. Paste it as MASTER_KEY below.
 #   3. docker compose -f docker-compose.example.yml up -d
-#   4. Open http://localhost:8000 — log in as admin / admin and change the password.
+#   4. Open http://localhost:8090, log in as admin / admin, change the password.
 
 services:
   cp-mcp-hub:
@@ -17,7 +17,9 @@ services:
     volumes:
       - cp-mcp-hub-data:/data
     ports:
-      - "8000:8000"
+      # Format is "HOST:CONTAINER". Change the host side (left) if 8090
+      # collides with another service. Leave the container side (right) at 8000.
+      - "8090:8000"
 
 volumes:
   cp-mcp-hub-data:

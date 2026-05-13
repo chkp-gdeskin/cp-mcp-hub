@@ -1,13 +1,13 @@
 {
   "version": "1",
-  "generated_at": "2026-05-13T14:55:34+00:00",
+  "generated_at": "2026-05-13T17:55:08+00:00",
   "source_commit": "99ac2207f6e749d02d6052f2ded1d963569089a5",
   "servers": [
     {
       "id": "argos-erm",
       "display_name": "Argos Erm",
       "npm_package": "@chkp/argos-erm-mcp",
-      "description": "Model Context Protocol (MCP) servers expose a structured, machine-readable API for your enterprise data\u2014designed for AI-powered automation, copilots, and decision engines. By delivering a clear, contextual slice of your security environment, MCP lets you query, analyze, and optimize complex systems without building custom SDKs or parsing raw exports.",
+      "description": "get_alerts - Search and retrieve security alerts with comprehensive filtering. get_alert_details - Get detailed alert information with intelligence enrichment.",
       "doc_url": "https://github.com/CheckPointSW/mcp-servers/tree/main/packages/argos-erm",
       "icon": "shield",
       "env_vars": [
@@ -27,7 +27,7 @@
       "id": "cpinfo-analysis",
       "display_name": "Cpinfo Analysis",
       "npm_package": "@chkp/cpinfo-analysis-mcp",
-      "description": "Model Context Protocol (MCP) servers expose a structured, machine-readable API for your enterprise data\u2014designed for AI-powered automation, copilots, and decision engines. By delivering a clear, contextual slice of your security environment, MCP lets you query, analyze, and optimize complex systems without building custom SDKs or parsing raw exports.",
+      "description": "Semantic Analysis: Automatically categorizes CPInfo sections by type (system, performance, security, network, etc.).",
       "doc_url": "https://github.com/CheckPointSW/mcp-servers/tree/main/packages/cpinfo-analysis",
       "icon": "shield",
       "env_vars": [
@@ -47,7 +47,7 @@
       "id": "documentation",
       "display_name": "Documentation",
       "npm_package": "@chkp/documentation-mcp",
-      "description": "Model Context Protocol (MCP) servers expose a structured, machine-readable API for your enterprise data\u2014designed for AI-powered automation, copilots, and decision engines. By delivering a clear, contextual slice of your security environment, MCP lets you query, analyze, and optimize complex systems without building custom SDKs or parsing raw exports.",
+      "description": "Access to Check Point Documentation Tool services and knowledge base. Search functionality for finding relevant documentation through Documentation Tool.",
       "doc_url": "https://github.com/CheckPointSW/mcp-servers/tree/main/packages/documentation-tool",
       "icon": "shield",
       "env_vars": [
@@ -94,7 +94,7 @@
       "id": "harmony-sase",
       "display_name": "Harmony Sase",
       "npm_package": "@chkp/harmony-sase-mcp",
-      "description": "MCP (Model Context Protocol) is an open standard that enables AI agents to interact with external tools, services, and data sources in a secure and structured way. It defines a consistent interface for AI systems to discover and use capabilities such as reading files, querying databases, or sending messages through APIs.",
+      "description": "Query Harmony SASE networks and their configurations. Retrieve and analyze gateway deployments across regions.",
       "doc_url": "https://github.com/CheckPointSW/mcp-servers/tree/main/packages/harmony-sase",
       "icon": "shield",
       "env_vars": [
@@ -132,7 +132,7 @@
       "id": "https-inspection",
       "display_name": "Https Inspection",
       "npm_package": "@chkp/https-inspection-mcp",
-      "description": "Model Context Protocol (MCP) servers expose a structured, machine-readable API for your enterprise data\u2014designed for AI-powered automation, copilots, and decision engines. By delivering a clear, contextual slice of your security environment, MCP lets you query, analyze, and optimize complex systems without building custom SDKs or parsing raw exports.",
+      "description": "HTTPS Inspection Rule Management: Query and analyze individual HTTPS inspection rules and entire rulebases.",
       "doc_url": "https://github.com/CheckPointSW/mcp-servers/tree/main/packages/https-inspection",
       "icon": "shield",
       "env_vars": [
@@ -197,7 +197,7 @@
       "id": "management-logs",
       "display_name": "Management Logs",
       "npm_package": "@chkp/management-logs-mcp",
-      "description": "Model Context Protocol (MCP) servers expose a structured, machine-readable API for your enterprise data\u2014designed for AI-powered automation, copilots, and decision engines. By delivering a clear, contextual slice of your security environment, MCP lets you query, analyze, and optimize complex systems without building custom SDKs or parsing raw exports.",
+      "description": "Query and visualize connection logs. View Audit and monitoring logs.",
       "doc_url": "https://github.com/CheckPointSW/mcp-servers/tree/main/packages/management-logs",
       "icon": "shield",
       "env_vars": [
@@ -262,7 +262,7 @@
       "id": "policy-insights",
       "display_name": "Policy Insights",
       "npm_package": "@chkp/policy-insights-mcp",
-      "description": "Model Context Protocol (MCP) servers expose a structured, machine-readable API for your enterprise data\u2014designed for AI-powered automation, copilots, and decision engines. By delivering a clear, contextual slice of your security environment, MCP lets you query, analyze, and optimize complex systems without building custom SDKs or parsing raw exports.",
+      "description": "Provide information for the Policy Insights card in Infinity Cloud Services. Check if Policy Insights is on and see product status and license info.",
       "doc_url": "https://github.com/CheckPointSW/mcp-servers/tree/main/packages/policy-insights",
       "icon": "shield",
       "env_vars": [
@@ -327,7 +327,7 @@
       "id": "quantum-gaia",
       "display_name": "Quantum Gaia",
       "npm_package": "@chkp/quantum-gaia-mcp",
-      "description": "Model Context Protocol (MCP) servers expose a structured, machine-readable API for your enterprise data\u2014designed for AI-powered automation, copilots, and decision engines. By delivering a clear, contextual slice of your network environment, MCP lets you query, analyze, and optimize complex systems without building custom SDKs or parsing raw exports.",
+      "description": "Query and visualize network management data such as: DHCP, DNS, NTP. Retrieve and analyze networking configurations including BGP, OSPF, IS-IS, PBR, route filters and more.",
       "doc_url": "https://github.com/CheckPointSW/mcp-servers/tree/main/packages/gaia",
       "icon": "shield",
       "env_vars": [],
@@ -337,7 +337,7 @@
       "id": "quantum-gw-cli",
       "display_name": "Quantum Gw Cli",
       "npm_package": "@chkp/quantum-gw-cli-mcp",
-      "description": "Model Context Protocol (MCP) servers expose a structured, machine-readable API for your enterprise data\u2014designed for AI-powered automation, copilots, and decision engines. By delivering a clear, contextual slice of your security environment, MCP lets you query, analyze, and optimize complex systems without building custom SDKs or parsing raw exports.",
+      "description": "Hardware & System Diagnostics: Query DMI decode information, asset details, and comprehensive system information.",
       "doc_url": "https://github.com/CheckPointSW/mcp-servers/tree/main/packages/gw-cli",
       "icon": "shield",
       "env_vars": [
@@ -402,7 +402,7 @@
       "id": "quantum-gw-connection-analysis",
       "display_name": "Quantum Gw Connection Analysis",
       "npm_package": "@chkp/quantum-gw-connection-analysis-mcp",
-      "description": "Model Context Protocol (MCP) servers expose a structured, machine-readable API for your enterprise data\u2014designed for AI-powered automation, copilots, and decision engines. By delivering a clear, contextual slice of your security environment, MCP lets you query, analyze, and optimize complex systems without building custom SDKs or parsing raw exports.",
+      "description": "Real-time Connection Analysis: Start and stop live connection debugging sessions. Source and Destination Tracking: Track connections between specific IP addresses.",
       "doc_url": "https://github.com/CheckPointSW/mcp-servers/tree/main/packages/gw-cli-connection-analysis",
       "icon": "shield",
       "env_vars": [
@@ -467,7 +467,7 @@
       "id": "quantum-management",
       "display_name": "Quantum Management",
       "npm_package": "@chkp/quantum-management-mcp",
-      "description": "Model Context Protocol (MCP) servers expose a structured, machine-readable API for your enterprise data\u2014designed for AI-powered automation, copilots, and decision engines. By delivering a clear, contextual slice of your security environment, MCP lets you query, analyze, and optimize complex systems without building custom SDKs or parsing raw exports.",
+      "description": "Query and visualize installed policies, rulebases, and network topology. Retrieve and analyze access, NAT and VPN rules.",
       "doc_url": "https://github.com/CheckPointSW/mcp-servers/tree/main/packages/management",
       "icon": "shield",
       "env_vars": [
@@ -532,7 +532,7 @@
       "id": "reputation-service",
       "display_name": "Reputation Service",
       "npm_package": "@chkp/reputation-service-mcp",
-      "description": "- Provides a threat classification for a given URL, file hash, or IP address",
+      "description": "Provides a threat classification for a given URL, file hash, or IP address.",
       "doc_url": "https://github.com/CheckPointSW/mcp-servers/tree/main/packages/reputation-service",
       "icon": "shield",
       "env_vars": [
@@ -552,7 +552,7 @@
       "id": "spark-management",
       "display_name": "Spark Management",
       "npm_package": "@chkp/spark-management-mcp",
-      "description": "MCP (Model Context Protocol) is an open standard that enables AI agents to interact with external tools, services, and data sources in a secure and structured way. It defines a consistent interface for AI systems to discover and use capabilities such as reading files, querying databases, or sending messages through APIs.",
+      "description": "Query and analyze gateway configurations and status. Retrieve device information including software versions, connectivity status, and hardware details.",
       "doc_url": "https://github.com/CheckPointSW/mcp-servers/tree/main/packages/spark-management",
       "icon": "shield",
       "env_vars": [],
@@ -562,7 +562,7 @@
       "id": "threat-emulation",
       "display_name": "Threat Emulation",
       "npm_package": "@chkp/threat-emulation-mcp",
-      "description": "A Model Context Protocol (MCP) server that provides seamless integration with Check Point's Threat Emulation and Anti-Virus cloud services. This server enables AI assistants to perform comprehensive malware analysis, file scanning, and threat detection through a simple, standardized interface.",
+      "description": "File Upload & Analysis - Submit files for threat analysis using Check Point's cloud infrastructure.",
       "doc_url": "https://github.com/CheckPointSW/mcp-servers/tree/main/packages/threat-emulation",
       "icon": "shield",
       "env_vars": [
@@ -582,7 +582,7 @@
       "id": "threat-prevention",
       "display_name": "Threat Prevention",
       "npm_package": "@chkp/threat-prevention-mcp",
-      "description": "Model Context Protocol (MCP) servers expose a structured, machine-readable API for your enterprise data\u2014designed for AI-powered automation, copilots, and decision engines. By delivering a clear, contextual slice of your security environment, MCP lets you query, analyze, and optimize complex systems without building custom SDKs or parsing raw exports.",
+      "description": "Threat Protection Management: Query and analyze threat protections, profiles, and indicators.",
       "doc_url": "https://github.com/CheckPointSW/mcp-servers/tree/main/packages/threat-prevention",
       "icon": "shield",
       "env_vars": [
