@@ -30,17 +30,19 @@ docker run --rm aaronroseio/cp-mcp-hub:latest generate-key
 docker run -d --name cp-mcp-hub \
   -e MASTER_KEY='paste-your-key-here' \
   -v cp-mcp-hub-data:/data \
-  -p 8000:8000 \
+  -p 8090:8000 \
   aaronroseio/cp-mcp-hub:latest
 
 # 3. Open the UI
-open http://localhost:8000     # macOS
-# or visit http://localhost:8000 in your browser
+open http://localhost:8090     # macOS
+# or visit http://localhost:8090 in your browser
 ```
 
 **First login:** `admin` / `admin`. You'll be required to set a new password (min 12 chars).
 
 > 💡 **Save your `MASTER_KEY` out of band** (password manager, 1Password, etc). Losing it means re-entering every credential.
+
+> 🔀 **Port already in use?** The `-p 8090:8000` flag maps host port **8090** to container port **8000**. If 8090 is taken on your machine, change the host side (left number) to any free port, for example `-p 9090:8000`, then open `http://localhost:9090` instead. Keep the container side (right number) at `8000`.
 
 ---
 
@@ -87,7 +89,7 @@ Edit `~/Library/Application Support/Claude/claude_desktop_config.json` (macOS) a
       "args": [
         "-y",
         "mcp-remote",
-        "http://localhost:8000/servers/quantum-management/sse",
+        "http://localhost:8090/servers/quantum-management/sse",
         "--header",
         "Authorization: Bearer YOUR_TOKEN_HERE"
       ]
@@ -106,7 +108,7 @@ One command:
 claude mcp add cp-quantum-management \
   --transport sse \
   --header "Authorization: Bearer YOUR_TOKEN_HERE" \
-  http://localhost:8000/servers/quantum-management/sse
+  http://localhost:8090/servers/quantum-management/sse
 ```
 
 Confirm with `claude mcp list`.
@@ -115,7 +117,7 @@ Confirm with `claude mcp list`.
 
 ```bash
 curl -N -H "Authorization: Bearer YOUR_TOKEN" -H "Accept: text/event-stream" \
-  http://localhost:8000/servers/quantum-management/sse
+  http://localhost:8090/servers/quantum-management/sse
 ```
 
 You should see SSE handshake data within a second or two. Ctrl+C to stop.
@@ -134,7 +136,7 @@ docker compose -f docker-compose.example.yml up -d
 
 ### Behind a reverse proxy (Caddy, Traefik, Tailscale Serve, etc.)
 
-The UI has **no built-in TLS or extra auth** beyond the single admin user. **Do not expose port 8000 directly to the internet.** Put it behind a proxy that terminates TLS and adds another auth layer.
+The UI has **no built-in TLS or extra auth** beyond the single admin user. **Do not expose the hub directly to the internet.** Put it behind a proxy that terminates TLS and adds another auth layer.
 
 If your proxy serves the hub at a public URL (e.g. `https://mcp.example.com`), set `EXTERNAL_BASE_URL` so the UI displays the right SSE URLs in copy-to-clipboard fields:
 
@@ -143,7 +145,7 @@ docker run -d --name cp-mcp-hub \
   -e MASTER_KEY='...' \
   -e EXTERNAL_BASE_URL='https://mcp.example.com' \
   -v cp-mcp-hub-data:/data \
-  -p 8000:8000 \
+  -p 8090:8000 \
   aaronroseio/cp-mcp-hub:latest
 ```
 
@@ -157,7 +159,7 @@ docker run -d --name cp-mcp-hub \
 | `SECRET_KEY`         | no       | derived from `MASTER_KEY`                        | Signs the session cookie. |
 | `DATABASE_URL`       | no       | `sqlite+aiosqlite:////data/cp-mcp-hub.db`        | SQLite path (rarely changed). |
 | `HOST`               | no       | `0.0.0.0`                                        | Bind address. |
-| `PORT`               | no       | `8000`                                           | Public HTTP port. |
+| `PORT`               | no       | `8000`                                           | Port uvicorn listens on **inside** the container. Map to a host port with `-p HOST:8000`. |
 | `MCP_PROXY_PORT`     | no       | `8001`                                           | Internal mcp-proxy port (loopback). |
 | `DATA_DIR`           | no       | `/data`                                          | DB + per-server log files live here. |
 | `MANIFEST_PATH`      | no       | `/app/server_definitions.json`                   | Manifest of all known `@chkp/*-mcp` servers. |
@@ -213,7 +215,7 @@ Want a reproducible build? Use a `:sha-<short>` tag instead of `:latest`.
 |---|---|---|
 | Container exits immediately with `FATAL: MASTER_KEY env var is required` | Forgot the env var | Re-run with `-e MASTER_KEY='...'` |
 | Container exits with `MASTER_KEY is not a valid 32-byte url-safe base64 Fernet key` | Pasted truncated or bad key | Regenerate: `docker run --rm aaronroseio/cp-mcp-hub:latest generate-key` |
-| Health check fails / `http://localhost:8000` shows nothing | Port 8000 already in use, or container still booting | Change port mapping (e.g. `-p 8080:8000`), or wait ~10s and re-check |
+| Health check fails / `http://localhost:8090` shows nothing | Port 8090 already in use on the host, or container still booting | Change the host side of the port mapping (e.g. `-p 9090:8000`) and open the new port, or wait ~10s and re-check |
 | Server card stuck on `Starting` | The `@chkp/*-mcp` package failed to launch | `docker logs cp-mcp-hub \| grep -i error`. Usually a missing or wrong env var on the server's config page. |
 | SSE endpoint returns 401 | Wrong or old bearer token | Re-copy from **Settings** page. Tokens are rotated by the rotate button. |
 | SSE endpoint returns 404 | Server is not enabled, or just got disabled | Toggle it on from the dashboard. |
