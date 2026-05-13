@@ -1,0 +1,23 @@
+# Quickstart:
+#   1. Generate a master key:
+#        docker run --rm chkp-arose/cp-mcp-hub:latest generate-key
+#   2. Paste it as MASTER_KEY below.
+#   3. docker compose -f docker-compose.example.yml up -d
+#   4. Open http://localhost:8000 — log in as admin / admin and change the password.
+
+services:
+  cp-mcp-hub:
+    image: chkp-arose/cp-mcp-hub:latest
+    container_name: cp-mcp-hub
+    restart: unless-stopped
+    environment:
+      MASTER_KEY: "REPLACE_ME_WITH_FERNET_KEY"
+      # Optional: override the URL the UI shows when copying SSE endpoints
+      # EXTERNAL_BASE_URL: "https://mcp.example.com"
+    volumes:
+      - cp-mcp-hub-data:/data
+    ports:
+      - "8000:8000"
+
+volumes:
+  cp-mcp-hub-data:

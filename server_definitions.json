@@ -1,0 +1,647 @@
+{
+  "version": "1",
+  "generated_at": "2026-05-13T14:55:34+00:00",
+  "source_commit": "99ac2207f6e749d02d6052f2ded1d963569089a5",
+  "servers": [
+    {
+      "id": "argos-erm",
+      "display_name": "Argos Erm",
+      "npm_package": "@chkp/argos-erm-mcp",
+      "description": "Model Context Protocol (MCP) servers expose a structured, machine-readable API for your enterprise data\u2014designed for AI-powered automation, copilots, and decision engines. By delivering a clear, contextual slice of your security environment, MCP lets you query, analyze, and optimize complex systems without building custom SDKs or parsing raw exports.",
+      "doc_url": "https://github.com/CheckPointSW/mcp-servers/tree/main/packages/argos-erm",
+      "icon": "shield",
+      "env_vars": [
+        {
+          "name": "ARGOS_CUSTOMER_ID",
+          "label": "Argos Customer Id",
+          "type": "string",
+          "required": true,
+          "secret": false,
+          "description": "Your Argos customer ID (required for all API calls)",
+          "default": null
+        }
+      ],
+      "cli_args": []
+    },
+    {
+      "id": "cpinfo-analysis",
+      "display_name": "Cpinfo Analysis",
+      "npm_package": "@chkp/cpinfo-analysis-mcp",
+      "description": "Model Context Protocol (MCP) servers expose a structured, machine-readable API for your enterprise data\u2014designed for AI-powered automation, copilots, and decision engines. By delivering a clear, contextual slice of your security environment, MCP lets you query, analyze, and optimize complex systems without building custom SDKs or parsing raw exports.",
+      "doc_url": "https://github.com/CheckPointSW/mcp-servers/tree/main/packages/cpinfo-analysis",
+      "icon": "shield",
+      "env_vars": [
+        {
+          "name": "CPINFO_CACHE_TTL_MS",
+          "label": "Cpinfo Cache Ttl Ms",
+          "type": "string",
+          "required": false,
+          "secret": false,
+          "description": "Override the idle eviction window (default: 10,800,000 ms \u2248 3 hours).",
+          "default": "10,800,000 ms \u2248 3 hours"
+        }
+      ],
+      "cli_args": []
+    },
+    {
+      "id": "documentation",
+      "display_name": "Documentation",
+      "npm_package": "@chkp/documentation-mcp",
+      "description": "Model Context Protocol (MCP) servers expose a structured, machine-readable API for your enterprise data\u2014designed for AI-powered automation, copilots, and decision engines. By delivering a clear, contextual slice of your security environment, MCP lets you query, analyze, and optimize complex systems without building custom SDKs or parsing raw exports.",
+      "doc_url": "https://github.com/CheckPointSW/mcp-servers/tree/main/packages/documentation-tool",
+      "icon": "shield",
+      "env_vars": [
+        {
+          "name": "CLIENT_ID",
+          "label": "Client Id",
+          "type": "string",
+          "required": true,
+          "secret": false,
+          "description": "Client ID for authentication with Check Point Documentation Tool (required)",
+          "default": null
+        },
+        {
+          "name": "SECRET_KEY",
+          "label": "Secret Key",
+          "type": "password",
+          "required": true,
+          "secret": true,
+          "description": "Secret Key for authentication with Check Point Documentation Tool (required)",
+          "default": null
+        },
+        {
+          "name": "AUTH_URL",
+          "label": "Auth Url",
+          "type": "url",
+          "required": false,
+          "secret": false,
+          "description": "Authentication URL copied from the API key creation dialog (e.g. `https://cloudinfra-gw.portal.checkpoint.com/auth/external`). Recommended \u2014 the path suffix is stripped automatically so you can paste it directly. When set, `REGION` is inferred and does not need to be set separately.",
+          "default": null
+        },
+        {
+          "name": "REGION",
+          "label": "Region",
+          "type": "string",
+          "required": false,
+          "secret": false,
+          "description": "Short region code \u2014 `EU`, `US`, `STG`, or `LOCAL` (default: `EU`). Use this instead of `AUTH_URL` for backwards-compatible configurations.",
+          "default": "`EU`"
+        }
+      ],
+      "cli_args": []
+    },
+    {
+      "id": "harmony-sase",
+      "display_name": "Harmony Sase",
+      "npm_package": "@chkp/harmony-sase-mcp",
+      "description": "MCP (Model Context Protocol) is an open standard that enables AI agents to interact with external tools, services, and data sources in a secure and structured way. It defines a consistent interface for AI systems to discover and use capabilities such as reading files, querying databases, or sending messages through APIs.",
+      "doc_url": "https://github.com/CheckPointSW/mcp-servers/tree/main/packages/harmony-sase",
+      "icon": "shield",
+      "env_vars": [
+        {
+          "name": "API_KEY",
+          "label": "Api Key",
+          "type": "password",
+          "required": false,
+          "secret": true,
+          "description": "Your Harmony SASE API key",
+          "default": null
+        },
+        {
+          "name": "MANAGEMENT_HOST",
+          "label": "Management Host",
+          "type": "url",
+          "required": false,
+          "secret": false,
+          "description": "Your Harmony SASE management API URL (e.g., `https://api.your-management-host.com/api`)",
+          "default": null
+        },
+        {
+          "name": "ORIGIN",
+          "label": "Origin",
+          "type": "string",
+          "required": false,
+          "secret": false,
+          "description": "Your tenant origin domain (e.g., `https://your.origin-domain.com`)",
+          "default": null
+        }
+      ],
+      "cli_args": []
+    },
+    {
+      "id": "https-inspection",
+      "display_name": "Https Inspection",
+      "npm_package": "@chkp/https-inspection-mcp",
+      "description": "Model Context Protocol (MCP) servers expose a structured, machine-readable API for your enterprise data\u2014designed for AI-powered automation, copilots, and decision engines. By delivering a clear, contextual slice of your security environment, MCP lets you query, analyze, and optimize complex systems without building custom SDKs or parsing raw exports.",
+      "doc_url": "https://github.com/CheckPointSW/mcp-servers/tree/main/packages/https-inspection",
+      "icon": "shield",
+      "env_vars": [
+        {
+          "name": "API_KEY",
+          "label": "Api Key",
+          "type": "password",
+          "required": false,
+          "secret": true,
+          "description": "Your Smart-1 Cloud API key",
+          "default": null
+        },
+        {
+          "name": "S1C_URL",
+          "label": "S1c Url",
+          "type": "url",
+          "required": false,
+          "secret": false,
+          "description": "Your Smart-1 Cloud tenant \"Web-API\" URL",
+          "default": null
+        },
+        {
+          "name": "MANAGEMENT_HOST",
+          "label": "Management Host",
+          "type": "url",
+          "required": false,
+          "secret": false,
+          "description": "IP address or hostname of your management server",
+          "default": null
+        },
+        {
+          "name": "PORT",
+          "label": "Port",
+          "type": "string",
+          "required": false,
+          "secret": false,
+          "description": "(Optional) Management server port (default: 443)",
+          "default": "443"
+        },
+        {
+          "name": "USERNAME",
+          "label": "Username",
+          "type": "string",
+          "required": false,
+          "secret": false,
+          "description": "Username for authentication (if using username/password authentication)",
+          "default": null
+        },
+        {
+          "name": "PASSWORD",
+          "label": "Password",
+          "type": "password",
+          "required": false,
+          "secret": true,
+          "description": "Password for authentication (if using username/password authentication)",
+          "default": null
+        }
+      ],
+      "cli_args": []
+    },
+    {
+      "id": "management-logs",
+      "display_name": "Management Logs",
+      "npm_package": "@chkp/management-logs-mcp",
+      "description": "Model Context Protocol (MCP) servers expose a structured, machine-readable API for your enterprise data\u2014designed for AI-powered automation, copilots, and decision engines. By delivering a clear, contextual slice of your security environment, MCP lets you query, analyze, and optimize complex systems without building custom SDKs or parsing raw exports.",
+      "doc_url": "https://github.com/CheckPointSW/mcp-servers/tree/main/packages/management-logs",
+      "icon": "shield",
+      "env_vars": [
+        {
+          "name": "API_KEY",
+          "label": "Api Key",
+          "type": "password",
+          "required": false,
+          "secret": true,
+          "description": "Your Smart-1 Cloud API key",
+          "default": null
+        },
+        {
+          "name": "S1C_URL",
+          "label": "S1c Url",
+          "type": "url",
+          "required": false,
+          "secret": false,
+          "description": "Your Smart-1 Cloud tenant \"Web-API\" URL",
+          "default": null
+        },
+        {
+          "name": "MANAGEMENT_HOST",
+          "label": "Management Host",
+          "type": "url",
+          "required": false,
+          "secret": false,
+          "description": "IP address or hostname of your management server",
+          "default": null
+        },
+        {
+          "name": "PORT",
+          "label": "Port",
+          "type": "string",
+          "required": false,
+          "secret": false,
+          "description": "(Optional) Management server port (default: 443)",
+          "default": "443"
+        },
+        {
+          "name": "USERNAME",
+          "label": "Username",
+          "type": "string",
+          "required": false,
+          "secret": false,
+          "description": "Username for authentication (if using username/password authentication)",
+          "default": null
+        },
+        {
+          "name": "PASSWORD",
+          "label": "Password",
+          "type": "password",
+          "required": false,
+          "secret": true,
+          "description": "Password for authentication (if using username/password authentication)",
+          "default": null
+        }
+      ],
+      "cli_args": []
+    },
+    {
+      "id": "policy-insights",
+      "display_name": "Policy Insights",
+      "npm_package": "@chkp/policy-insights-mcp",
+      "description": "Model Context Protocol (MCP) servers expose a structured, machine-readable API for your enterprise data\u2014designed for AI-powered automation, copilots, and decision engines. By delivering a clear, contextual slice of your security environment, MCP lets you query, analyze, and optimize complex systems without building custom SDKs or parsing raw exports.",
+      "doc_url": "https://github.com/CheckPointSW/mcp-servers/tree/main/packages/policy-insights",
+      "icon": "shield",
+      "env_vars": [
+        {
+          "name": "API_KEY",
+          "label": "Api Key",
+          "type": "password",
+          "required": false,
+          "secret": true,
+          "description": "Your Smart-1 Cloud API key",
+          "default": null
+        },
+        {
+          "name": "S1C_URL",
+          "label": "S1c Url",
+          "type": "url",
+          "required": false,
+          "secret": false,
+          "description": "Your Smart-1 Cloud tenant \"Web-API\" URL",
+          "default": null
+        },
+        {
+          "name": "MANAGEMENT_HOST",
+          "label": "Management Host",
+          "type": "url",
+          "required": false,
+          "secret": false,
+          "description": "IP address or hostname of your management server",
+          "default": null
+        },
+        {
+          "name": "MANAGEMENT_PORT",
+          "label": "Management Port",
+          "type": "integer",
+          "required": false,
+          "secret": false,
+          "description": "(Optional) Management server port (default: 443)",
+          "default": "443"
+        },
+        {
+          "name": "USERNAME",
+          "label": "Username",
+          "type": "string",
+          "required": false,
+          "secret": false,
+          "description": "Username for authentication (if using username/password authentication)",
+          "default": null
+        },
+        {
+          "name": "PASSWORD",
+          "label": "Password",
+          "type": "password",
+          "required": false,
+          "secret": true,
+          "description": "Password for authentication (if using username/password authentication)",
+          "default": null
+        }
+      ],
+      "cli_args": []
+    },
+    {
+      "id": "quantum-gaia",
+      "display_name": "Quantum Gaia",
+      "npm_package": "@chkp/quantum-gaia-mcp",
+      "description": "Model Context Protocol (MCP) servers expose a structured, machine-readable API for your enterprise data\u2014designed for AI-powered automation, copilots, and decision engines. By delivering a clear, contextual slice of your network environment, MCP lets you query, analyze, and optimize complex systems without building custom SDKs or parsing raw exports.",
+      "doc_url": "https://github.com/CheckPointSW/mcp-servers/tree/main/packages/gaia",
+      "icon": "shield",
+      "env_vars": [],
+      "cli_args": []
+    },
+    {
+      "id": "quantum-gw-cli",
+      "display_name": "Quantum Gw Cli",
+      "npm_package": "@chkp/quantum-gw-cli-mcp",
+      "description": "Model Context Protocol (MCP) servers expose a structured, machine-readable API for your enterprise data\u2014designed for AI-powered automation, copilots, and decision engines. By delivering a clear, contextual slice of your security environment, MCP lets you query, analyze, and optimize complex systems without building custom SDKs or parsing raw exports.",
+      "doc_url": "https://github.com/CheckPointSW/mcp-servers/tree/main/packages/gw-cli",
+      "icon": "shield",
+      "env_vars": [
+        {
+          "name": "API_KEY",
+          "label": "Api Key",
+          "type": "password",
+          "required": false,
+          "secret": true,
+          "description": "Your Smart-1 Cloud API key",
+          "default": null
+        },
+        {
+          "name": "S1C_URL",
+          "label": "S1c Url",
+          "type": "url",
+          "required": false,
+          "secret": false,
+          "description": "Your Smart-1 Cloud tenant \"Web-API\" URL",
+          "default": null
+        },
+        {
+          "name": "MANAGEMENT_HOST",
+          "label": "Management Host",
+          "type": "url",
+          "required": false,
+          "secret": false,
+          "description": "IP address or hostname of your management server",
+          "default": null
+        },
+        {
+          "name": "PORT",
+          "label": "Port",
+          "type": "string",
+          "required": false,
+          "secret": false,
+          "description": "(Optional) Management server port (default: 443)",
+          "default": "443"
+        },
+        {
+          "name": "USERNAME",
+          "label": "Username",
+          "type": "string",
+          "required": false,
+          "secret": false,
+          "description": "Username for authentication (if using username/password authentication)",
+          "default": null
+        },
+        {
+          "name": "PASSWORD",
+          "label": "Password",
+          "type": "password",
+          "required": false,
+          "secret": true,
+          "description": "Password for authentication (if using username/password authentication)",
+          "default": null
+        }
+      ],
+      "cli_args": []
+    },
+    {
+      "id": "quantum-gw-connection-analysis",
+      "display_name": "Quantum Gw Connection Analysis",
+      "npm_package": "@chkp/quantum-gw-connection-analysis-mcp",
+      "description": "Model Context Protocol (MCP) servers expose a structured, machine-readable API for your enterprise data\u2014designed for AI-powered automation, copilots, and decision engines. By delivering a clear, contextual slice of your security environment, MCP lets you query, analyze, and optimize complex systems without building custom SDKs or parsing raw exports.",
+      "doc_url": "https://github.com/CheckPointSW/mcp-servers/tree/main/packages/gw-cli-connection-analysis",
+      "icon": "shield",
+      "env_vars": [
+        {
+          "name": "API_KEY",
+          "label": "Api Key",
+          "type": "password",
+          "required": false,
+          "secret": true,
+          "description": "Your Smart-1 Cloud API key",
+          "default": null
+        },
+        {
+          "name": "S1C_URL",
+          "label": "S1c Url",
+          "type": "url",
+          "required": false,
+          "secret": false,
+          "description": "Your Smart-1 Cloud tenant \"Web-API\" URL",
+          "default": null
+        },
+        {
+          "name": "MANAGEMENT_HOST",
+          "label": "Management Host",
+          "type": "url",
+          "required": false,
+          "secret": false,
+          "description": "IP address or hostname of your management server",
+          "default": null
+        },
+        {
+          "name": "PORT",
+          "label": "Port",
+          "type": "string",
+          "required": false,
+          "secret": false,
+          "description": "(Optional) Management server port (default: 443)",
+          "default": "443"
+        },
+        {
+          "name": "USERNAME",
+          "label": "Username",
+          "type": "string",
+          "required": false,
+          "secret": false,
+          "description": "Username for authentication (if using username/password authentication)",
+          "default": null
+        },
+        {
+          "name": "PASSWORD",
+          "label": "Password",
+          "type": "password",
+          "required": false,
+          "secret": true,
+          "description": "Password for authentication (if using username/password authentication)",
+          "default": null
+        }
+      ],
+      "cli_args": []
+    },
+    {
+      "id": "quantum-management",
+      "display_name": "Quantum Management",
+      "npm_package": "@chkp/quantum-management-mcp",
+      "description": "Model Context Protocol (MCP) servers expose a structured, machine-readable API for your enterprise data\u2014designed for AI-powered automation, copilots, and decision engines. By delivering a clear, contextual slice of your security environment, MCP lets you query, analyze, and optimize complex systems without building custom SDKs or parsing raw exports.",
+      "doc_url": "https://github.com/CheckPointSW/mcp-servers/tree/main/packages/management",
+      "icon": "shield",
+      "env_vars": [
+        {
+          "name": "API_KEY",
+          "label": "Api Key",
+          "type": "password",
+          "required": false,
+          "secret": true,
+          "description": "Your Smart-1 Cloud API key",
+          "default": null
+        },
+        {
+          "name": "S1C_URL",
+          "label": "S1c Url",
+          "type": "url",
+          "required": false,
+          "secret": false,
+          "description": "Your Smart-1 Cloud tenant \"Web-API\" URL",
+          "default": null
+        },
+        {
+          "name": "MANAGEMENT_HOST",
+          "label": "Management Host",
+          "type": "url",
+          "required": false,
+          "secret": false,
+          "description": "IP address or hostname of your management server",
+          "default": null
+        },
+        {
+          "name": "PORT",
+          "label": "Port",
+          "type": "string",
+          "required": false,
+          "secret": false,
+          "description": "(Optional) Management server port (default: 443)",
+          "default": "443"
+        },
+        {
+          "name": "USERNAME",
+          "label": "Username",
+          "type": "string",
+          "required": false,
+          "secret": false,
+          "description": "Username for authentication (if using username/password authentication)",
+          "default": null
+        },
+        {
+          "name": "PASSWORD",
+          "label": "Password",
+          "type": "password",
+          "required": false,
+          "secret": true,
+          "description": "Password for authentication (if using username/password authentication)",
+          "default": null
+        }
+      ],
+      "cli_args": []
+    },
+    {
+      "id": "reputation-service",
+      "display_name": "Reputation Service",
+      "npm_package": "@chkp/reputation-service-mcp",
+      "description": "- Provides a threat classification for a given URL, file hash, or IP address",
+      "doc_url": "https://github.com/CheckPointSW/mcp-servers/tree/main/packages/reputation-service",
+      "icon": "shield",
+      "env_vars": [
+        {
+          "name": "API_KEY",
+          "label": "Api Key",
+          "type": "password",
+          "required": false,
+          "secret": true,
+          "description": "Your API key",
+          "default": null
+        }
+      ],
+      "cli_args": []
+    },
+    {
+      "id": "spark-management",
+      "display_name": "Spark Management",
+      "npm_package": "@chkp/spark-management-mcp",
+      "description": "MCP (Model Context Protocol) is an open standard that enables AI agents to interact with external tools, services, and data sources in a secure and structured way. It defines a consistent interface for AI systems to discover and use capabilities such as reading files, querying databases, or sending messages through APIs.",
+      "doc_url": "https://github.com/CheckPointSW/mcp-servers/tree/main/packages/spark-management",
+      "icon": "shield",
+      "env_vars": [],
+      "cli_args": []
+    },
+    {
+      "id": "threat-emulation",
+      "display_name": "Threat Emulation",
+      "npm_package": "@chkp/threat-emulation-mcp",
+      "description": "A Model Context Protocol (MCP) server that provides seamless integration with Check Point's Threat Emulation and Anti-Virus cloud services. This server enables AI assistants to perform comprehensive malware analysis, file scanning, and threat detection through a simple, standardized interface.",
+      "doc_url": "https://github.com/CheckPointSW/mcp-servers/tree/main/packages/threat-emulation",
+      "icon": "shield",
+      "env_vars": [
+        {
+          "name": "API_KEY",
+          "label": "Api Key",
+          "type": "password",
+          "required": false,
+          "secret": true,
+          "description": "Your Check Point Threat Emulation API key",
+          "default": null
+        }
+      ],
+      "cli_args": []
+    },
+    {
+      "id": "threat-prevention",
+      "display_name": "Threat Prevention",
+      "npm_package": "@chkp/threat-prevention-mcp",
+      "description": "Model Context Protocol (MCP) servers expose a structured, machine-readable API for your enterprise data\u2014designed for AI-powered automation, copilots, and decision engines. By delivering a clear, contextual slice of your security environment, MCP lets you query, analyze, and optimize complex systems without building custom SDKs or parsing raw exports.",
+      "doc_url": "https://github.com/CheckPointSW/mcp-servers/tree/main/packages/threat-prevention",
+      "icon": "shield",
+      "env_vars": [
+        {
+          "name": "API_KEY",
+          "label": "Api Key",
+          "type": "password",
+          "required": false,
+          "secret": true,
+          "description": "Your Smart-1 Cloud API key",
+          "default": null
+        },
+        {
+          "name": "S1C_URL",
+          "label": "S1c Url",
+          "type": "url",
+          "required": false,
+          "secret": false,
+          "description": "Your Smart-1 Cloud tenant \"Web-API\" URL",
+          "default": null
+        },
+        {
+          "name": "MANAGEMENT_HOST",
+          "label": "Management Host",
+          "type": "url",
+          "required": false,
+          "secret": false,
+          "description": "IP address or hostname of your management server",
+          "default": null
+        },
+        {
+          "name": "PORT",
+          "label": "Port",
+          "type": "string",
+          "required": false,
+          "secret": false,
+          "description": "(Optional) Management server port (default: 443)",
+          "default": "443"
+        },
+        {
+          "name": "USERNAME",
+          "label": "Username",
+          "type": "string",
+          "required": false,
+          "secret": false,
+          "description": "Username for authentication (if using username/password authentication)",
+          "default": null
+        },
+        {
+          "name": "PASSWORD",
+          "label": "Password",
+          "type": "password",
+          "required": false,
+          "secret": true,
+          "description": "Password for authentication (if using username/password authentication)",
+          "default": null
+        }
+      ],
+      "cli_args": []
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+cp-mcp-hub
+Copyright 2026 The cp-mcp-hub authors
+
+This product includes software developed at Check Point Software Technologies Ltd.
+The bundled @chkp/*-mcp packages are sourced from
+https://github.com/CheckPointSW/mcp-servers (MIT-licensed) and remain the property
+of their respective copyright holders.
+
+This product also bundles the following third-party software:
+  - mcp-proxy (sparfenyuk/mcp-proxy) — MIT
+  - FastAPI, Starlette, Uvicorn — MIT / BSD
+  - SQLAlchemy, Alembic — MIT
+  - Pydantic — MIT
+  - cryptography (PyCA) — Apache-2.0 OR BSD-3-Clause
+  - React, Radix UI, lucide-react — MIT
+  - Tailwind CSS — MIT
+  - Vite — MIT
+
+Check Point® is a registered trademark of Check Point Software Technologies Ltd.
+This project is community tooling and is not an official Check Point product.

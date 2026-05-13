@@ -1,0 +1,30 @@
+name: refresh-manifest
+on:
+  schedule:
+    - cron: "0 3 * * 0"
+  workflow_dispatch:
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Regenerate manifest
+        run: python scripts/build_manifest.py
+      - name: Open PR if changed
+        uses: peter-evans/create-pull-request@v7
+        with:
+          commit-message: "chore: refresh server_definitions.json"
+          title: "chore: refresh server_definitions.json"
+          body: |
+            Automated weekly refresh of `server_definitions.json` from
+            https://github.com/CheckPointSW/mcp-servers
+          branch: chore/refresh-manifest
+          delete-branch: true
+          add-paths: server_definitions.json

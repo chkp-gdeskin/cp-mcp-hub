@@ -1,0 +1,94 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+ * Check Point brand palette (2026 guidelines).
+ * Primary signature: Brand Berry #ee0c5d, Gravitas Grey #41273c, Clay #f2f2f2
+ * Web CTA (white-on-color, AA-accessible): Brand Berry Click #e40c5b
+ * Secondary accents (sparingly): Orange #ff3312, Purple #741984, Yellow #fcb117, Berry Dark #b70d4e
+ */
+@layer base {
+  :root {
+    /* Surfaces — Clay-derived neutrals */
+    --background: 0 0% 96%;              /* Clay-ish #f2f2f2 */
+    --foreground: 315 24% 18%;           /* Gravitas Grey */
+    --card: 0 0% 100%;                   /* pure white panels on the Clay backdrop */
+    --card-foreground: 315 24% 18%;
+    --muted: 0 0% 92%;
+    --muted-foreground: 315 12% 38%;
+    --accent: 337 89% 96%;               /* very pale Berry tint for hover states */
+    --accent-foreground: 337 89% 38%;
+    --secondary: 0 0% 94%;
+    --secondary-foreground: 315 24% 18%;
+
+    /* Brand */
+    --primary: 337 89% 47%;              /* Brand Berry Click #e40c5b — for white text */
+    --primary-foreground: 0 0% 100%;
+    --destructive: 8 100% 54%;           /* Orange #ff3312 */
+    --destructive-foreground: 0 0% 100%;
+    --warning: 41 98% 54%;               /* Yellow #fcb117 */
+    --warning-foreground: 315 24% 18%;
+    --success: 152 60% 36%;              /* neutral emerald — not in brand palette but used as system signal */
+    --success-foreground: 0 0% 100%;
+    --berry: 336 89% 49%;                /* Brand Berry #ee0c5d — for marks/icons */
+    --berry-dark: 337 87% 38%;
+    --purple: 292 68% 31%;               /* Purple #741984 */
+    --purple-foreground: 0 0% 100%;
+
+    /* Form elements */
+    --border: 0 0% 88%;
+    --input: 0 0% 88%;
+    --ring: 337 89% 47%;
+    --radius: 0.375rem;                   /* slightly tighter — feels more enterprise */
+  }
+
+  .dark {
+    /* Surfaces — Gravitas Grey-derived */
+    --background: 315 26% 11%;            /* deep aubergine */
+    --foreground: 0 0% 95%;
+    --card: 315 24% 15%;                  /* slightly lifted from background */
+    --card-foreground: 0 0% 95%;
+    --muted: 315 20% 18%;
+    --muted-foreground: 0 0% 65%;
+    --accent: 337 60% 22%;
+    --accent-foreground: 0 0% 98%;
+    --secondary: 315 20% 18%;
+    --secondary-foreground: 0 0% 95%;
+
+    /* Brand */
+    --primary: 336 89% 56%;               /* Brand Berry, lifted for dark mode contrast */
+    --primary-foreground: 0 0% 100%;
+    --destructive: 8 92% 56%;
+    --destructive-foreground: 0 0% 100%;
+    --warning: 41 98% 56%;
+    --warning-foreground: 315 24% 12%;
+    --success: 152 55% 45%;
+    --success-foreground: 0 0% 100%;
+    --berry: 336 89% 56%;
+    --berry-dark: 337 86% 42%;
+    --purple: 292 60% 50%;
+    --purple-foreground: 0 0% 100%;
+
+    --border: 315 20% 22%;
+    --input: 315 20% 22%;
+    --ring: 336 89% 56%;
+  }
+
+  * { @apply border-border; }
+  html { font-family: var(--font-sans); }
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: var(--font-sans);
+    /* Body text — flush left, ragged right per Check Point guidelines */
+    text-align: left;
+  }
+  code, kbd, pre, samp { font-family: var(--font-mono); }
+  h1, h2, h3, h4 { letter-spacing: -0.01em; }
+}
+
+/* CSS variables for font stacks — Arial-first (general use per guidelines), Consolas-first for mono */
+:root {
+  --font-sans: Arial, -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", sans-serif;
+  --font-mono: Consolas, "SF Mono", Menlo, Monaco, "Liberation Mono", monospace;
+}
