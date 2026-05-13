@@ -8,11 +8,11 @@
 <p align="center">
   <a href="https://hub.docker.com/r/aaronroseio/cp-mcp-hub"><img alt="Docker Hub" src="https://img.shields.io/badge/docker-aaronroseio%2Fcp--mcp--hub-2496ED?logo=docker&logoColor=white"></a>
   <img alt="Architecture" src="https://img.shields.io/badge/arch-amd64%20%7C%20arm64-lightgrey">
-  <a href="LICENSE"><img alt="License" src="https://img.shields.io/badge/license-Apache--2.0-blue"></a>
+  <a href="https://github.com/chkp-arose/cp-mcp-hub/blob/main/LICENSE"><img alt="License" src="https://img.shields.io/badge/license-Apache--2.0-blue"></a>
 </p>
 
 <p align="center">
-  <img src="docs/images/dashboard.png" alt="Dashboard with servers grouped by Check Point solution pillar" width="900">
+  <img src="https://raw.githubusercontent.com/chkp-arose/cp-mcp-hub/main/docs/images/dashboard.png" alt="Dashboard with servers grouped by Check Point solution pillar" width="900">
 </p>
 
 ---
@@ -49,21 +49,21 @@ open http://localhost:8000     # macOS
 <table>
 <tr>
 <td width="50%">
-<img src="docs/images/login.png" alt="Login screen">
+<img src="https://raw.githubusercontent.com/chkp-arose/cp-mcp-hub/main/docs/images/login.png" alt="Login screen">
 <br><sub><b>Login.</b> Single-user admin in v1.</sub>
 </td>
 <td width="50%">
-<img src="docs/images/server-detail.png" alt="Server configuration, endpoint, and live logs">
+<img src="https://raw.githubusercontent.com/chkp-arose/cp-mcp-hub/main/docs/images/server-detail.png" alt="Server configuration, endpoint, and live logs">
 <br><sub><b>Server detail.</b> Configure env vars, copy the SSE endpoint, watch logs live.</sub>
 </td>
 </tr>
 <tr>
 <td width="50%">
-<img src="docs/images/pillar-group.png" alt="Servers grouped by Check Point solution pillar">
+<img src="https://raw.githubusercontent.com/chkp-arose/cp-mcp-hub/main/docs/images/pillar-group.png" alt="Servers grouped by Check Point solution pillar">
 <br><sub><b>Pillar grouping.</b> Organized by Check Point's four solution pillars.</sub>
 </td>
 <td width="50%">
-<img src="docs/images/settings.png" alt="Settings page with token rotation dialog">
+<img src="https://raw.githubusercontent.com/chkp-arose/cp-mcp-hub/main/docs/images/settings.png" alt="Settings page with token rotation dialog">
 <br><sub><b>Settings.</b> Rotate the SSE bearer, change admin password, see system info.</sub>
 </td>
 </tr>
@@ -126,7 +126,7 @@ You should see SSE handshake data within a second or two. Ctrl+C to stop.
 
 ### Docker Compose
 
-A starter compose file is included. See [`docker-compose.example.yml`](docker-compose.example.yml). Copy it, paste your `MASTER_KEY`, then:
+A starter compose file is included. See [`docker-compose.example.yml`](https://github.com/chkp-arose/cp-mcp-hub/blob/main/docker-compose.example.yml). Copy it, paste your `MASTER_KEY`, then:
 
 ```bash
 docker compose -f docker-compose.example.yml up -d
@@ -292,7 +292,7 @@ Per-server SSE tokens · OIDC/SSO · multi-user · TLS termination inside the co
 
 ## 📜 License
 
-Licensed under the [Apache License 2.0](LICENSE). See [NOTICE](NOTICE) for third-party attributions.
+Licensed under the [Apache License 2.0](https://github.com/chkp-arose/cp-mcp-hub/blob/main/LICENSE). See [NOTICE](https://github.com/chkp-arose/cp-mcp-hub/blob/main/NOTICE) for third-party attributions.
 
 This is community tooling for [CheckPointSW/mcp-servers](https://github.com/CheckPointSW/mcp-servers) and is not an official Check Point product.
 
