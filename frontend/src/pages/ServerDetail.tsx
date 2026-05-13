@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { ExternalLink, Loader2 } from "lucide-react";
+import { ExternalLink, Github, Loader2 } from "lucide-react";
 import { api, type ServerDetail as ServerDetailT } from "@/api/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -82,13 +82,21 @@ export function ServerDetail() {
         <div className="mt-1 flex items-center gap-3 flex-wrap">
           <h1 className="text-2xl font-semibold tracking-tight">{server.display_name}</h1>
           <StatusBadge state={effectiveState(server)} />
-          {server.doc_url && (
-            <a href={server.doc_url} target="_blank" rel="noreferrer" className="text-xs text-muted-foreground hover:text-foreground inline-flex items-center gap-1">
-              docs <ExternalLink className="h-3 w-3" />
-            </a>
-          )}
         </div>
         {server.description && <p className="text-sm text-muted-foreground mt-1">{server.description}</p>}
+        {server.doc_url && (
+          <a
+            href={server.doc_url}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center gap-1.5 mt-2 text-sm text-berry hover:underline font-medium"
+            title="View this server's full documentation and tool list on GitHub"
+          >
+            <Github className="h-4 w-4" />
+            View on CheckPointSW/mcp-servers
+            <ExternalLink className="h-3 w-3" />
+          </a>
+        )}
       </div>
 
       {error && <div className="rounded-md border border-destructive/30 bg-destructive/5 px-3 py-2 text-sm text-destructive">{error}</div>}
