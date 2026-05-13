@@ -4,6 +4,10 @@
 #   2. Paste it as MASTER_KEY below.
 #   3. docker compose -f docker-compose.example.yml up -d
 #   4. Open http://localhost:8090, log in as admin / admin, change the password.
+#
+# To serve over HTTPS (required by Claude Desktop / Claude Code when the hub is
+# not on localhost): uncomment the ENABLE_TLS block below. The container will
+# generate a self-signed cert on first boot, persisted in the /data volume.
 
 services:
   cp-mcp-hub:
@@ -12,7 +16,17 @@ services:
     restart: unless-stopped
     environment:
       MASTER_KEY: "REPLACE_ME_WITH_FERNET_KEY"
-      # Optional: override the URL the UI shows when copying SSE endpoints
+
+      # ----- Optional: HTTPS with a self-signed cert -----
+      # Required when connecting Claude Desktop / Code from another machine.
+      # ENABLE_TLS: "true"
+      #
+      # Comma-separated hostnames and IPs that should be valid in the cert's
+      # SAN list. Add your LAN hostname and / or static IP so URLs like
+      # https://my-server.local:8090 work without a name-mismatch warning.
+      # TLS_HOSTNAMES: "localhost,127.0.0.1,my-server.local,192.168.1.50"
+
+      # ----- Optional: override the URL the UI shows when copying SSE endpoints -----
       # EXTERNAL_BASE_URL: "https://mcp.example.com"
     volumes:
       - cp-mcp-hub-data:/data
