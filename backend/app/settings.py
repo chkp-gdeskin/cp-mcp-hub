@@ -30,7 +30,7 @@ class Settings(BaseSettings):
         except (InvalidToken, ValueError, TypeError) as exc:
             raise ValueError(
                 f"MASTER_KEY is not a valid 32-byte url-safe base64 Fernet key: {exc}. "
-                "Generate one with: docker run --rm chkp-arose/cp-mcp-hub generate-key"
+                "Generate one with: docker run --rm aaronroseio/cp-mcp-hub generate-key"
             ) from exc
         return v
 

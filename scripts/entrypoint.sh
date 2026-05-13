@@ -6,12 +6,12 @@ if [[ "${1:-}" == "generate-key" ]]; then
 fi
 
 if [[ -z "${MASTER_KEY:-}" ]]; then
-  echo "FATAL: MASTER_KEY env var is required. Generate one with: docker run --rm chkp-arose/cp-mcp-hub:latest generate-key" >&2
+  echo "FATAL: MASTER_KEY env var is required. Generate one with: docker run --rm aaronroseio/cp-mcp-hub:latest generate-key" >&2
   exit 1
 fi
 
 if ! python3 -c "import sys; from cryptography.fernet import Fernet; Fernet(sys.argv[1])" "$MASTER_KEY" >/dev/null 2>&1; then
-  echo "FATAL: MASTER_KEY is not a valid 32-byte url-safe base64 Fernet key. Regenerate with: docker run --rm chkp-arose/cp-mcp-hub:latest generate-key" >&2
+  echo "FATAL: MASTER_KEY is not a valid 32-byte url-safe base64 Fernet key. Regenerate with: docker run --rm aaronroseio/cp-mcp-hub:latest generate-key" >&2
   exit 1
 fi
 

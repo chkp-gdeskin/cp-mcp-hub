@@ -6,9 +6,9 @@
 </p>
 
 <p align="center">
-  <a href="https://hub.docker.com/r/chkp-arose/cp-mcp-hub"><img alt="Docker Hub" src="https://img.shields.io/badge/docker-arose--chkp%2Fcp--mcp--hub-2496ED?logo=docker&logoColor=white"></a>
+  <a href="https://hub.docker.com/r/aaronroseio/cp-mcp-hub"><img alt="Docker Hub" src="https://img.shields.io/badge/docker-aaronroseio%2Fcp--mcp--hub-2496ED?logo=docker&logoColor=white"></a>
   <img alt="Architecture" src="https://img.shields.io/badge/arch-amd64%20%7C%20arm64-lightgrey">
-  <img alt="License" src="https://img.shields.io/badge/license-TBD-blue">
+  <a href="LICENSE"><img alt="License" src="https://img.shields.io/badge/license-Apache--2.0-blue"></a>
 </p>
 
 <!-- 📷 SCREENSHOT 1 — Dashboard hero shot (the most impressive view).
@@ -27,7 +27,7 @@ You need Docker. That's it.
 
 ```bash
 # 1. Generate a master encryption key (save this somewhere safe!)
-docker run --rm chkp-arose/cp-mcp-hub:latest generate-key
+docker run --rm aaronroseio/cp-mcp-hub:latest generate-key
 # → prints something like: 4Te6XpFq2j8N9k...long-base64-string...=
 
 # 2. Run the hub (paste the key from step 1)
@@ -35,7 +35,7 @@ docker run -d --name cp-mcp-hub \
   -e MASTER_KEY='paste-your-key-here' \
   -v cp-mcp-hub-data:/data \
   -p 8000:8000 \
-  chkp-arose/cp-mcp-hub:latest
+  aaronroseio/cp-mcp-hub:latest
 
 # 3. Open the UI
 open http://localhost:8000     # macOS
@@ -164,7 +164,7 @@ docker run -d --name cp-mcp-hub \
   -e EXTERNAL_BASE_URL='https://mcp.example.com' \
   -v cp-mcp-hub-data:/data \
   -p 8000:8000 \
-  chkp-arose/cp-mcp-hub:latest
+  aaronroseio/cp-mcp-hub:latest
 ```
 
 ---
@@ -218,7 +218,7 @@ docker run --rm -v cp-mcp-hub-data:/data -v "$(pwd)":/backup alpine \
 **Upgrade**: pull and recreate. State and credentials persist in the volume.
 
 ```bash
-docker pull chkp-arose/cp-mcp-hub:latest
+docker pull aaronroseio/cp-mcp-hub:latest
 docker stop cp-mcp-hub && docker rm cp-mcp-hub
 # re-run the same `docker run …` command from Quickstart step 2.
 ```
@@ -232,7 +232,7 @@ Want a reproducible build? Use a `:sha-<short>` tag instead of `:latest`.
 | Symptom | Likely cause | Fix |
 |---|---|---|
 | Container exits immediately with `FATAL: MASTER_KEY env var is required` | Forgot the env var | Re-run with `-e MASTER_KEY='...'` |
-| Container exits with `MASTER_KEY is not a valid 32-byte url-safe base64 Fernet key` | Pasted truncated or bad key | Regenerate: `docker run --rm chkp-arose/cp-mcp-hub:latest generate-key` |
+| Container exits with `MASTER_KEY is not a valid 32-byte url-safe base64 Fernet key` | Pasted truncated or bad key | Regenerate: `docker run --rm aaronroseio/cp-mcp-hub:latest generate-key` |
 | Health check fails / `http://localhost:8000` shows nothing | Port 8000 already in use, or container still booting | Change port mapping (e.g. `-p 8080:8000`), or wait ~10s and re-check |
 | Server card stuck on `Starting` | The `@chkp/*-mcp` package failed to launch | `docker logs cp-mcp-hub | grep -i error` — usually a missing/wrong env var on the server's config page |
 | SSE endpoint returns 401 | Wrong / old bearer token | Re-copy from **Settings** page. Tokens are rotated by the rotate button. |

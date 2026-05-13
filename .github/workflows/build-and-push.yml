@@ -24,7 +24,7 @@ jobs:
       - id: meta
         uses: docker/metadata-action@v5
         with:
-          images: chkp-arose/cp-mcp-hub
+          images: aaronroseio/cp-mcp-hub
           tags: |
             type=raw,value=latest,enable={{is_default_branch}}
             type=semver,pattern={{version}}
@@ -43,7 +43,7 @@ jobs:
       - name: Generate SBOM
         uses: anchore/sbom-action@v0
         with:
-          image: chkp-arose/cp-mcp-hub@${{ steps.build.outputs.digest }}
+          image: aaronroseio/cp-mcp-hub@${{ steps.build.outputs.digest }}
           format: spdx-json
           output-file: sbom.spdx.json
       - uses: actions/upload-artifact@v4
@@ -56,5 +56,5 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-          repository: chkp-arose/cp-mcp-hub
+          repository: aaronroseio/cp-mcp-hub
           short-description: "Self-hosted control plane for Check Point MCP servers"
