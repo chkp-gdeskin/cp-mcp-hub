@@ -1,12 +1,21 @@
 import { useCallback, useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { Copy, ExternalLink } from "lucide-react";
+import { Copy, ExternalLink, Loader2 } from "lucide-react";
 import { api, type ServerDetail as ServerDetailT } from "@/api/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { StatusBadge } from "@/components/StatusBadge";
 import { ConfigForm } from "@/components/ConfigForm";
 import { LogViewer } from "@/components/LogViewer";
+
+type Action = "start" | "stop" | "restart";
+
+function effectiveState(server: ServerDetailT): string {
+  if (!server.enabled) return "disabled";
+  // DB says enabled but orchestrator hasn't reconciled yet — show as transitional.
+  if (server.state === "disabled") return "starting";
+  return server.state;
+}
 
 function copy(text: string) {
   void navigator.clipboard.writeText(text);
@@ -18,6 +27,9 @@ export function ServerDetail() {
   const [token, setToken] = useState<string | null>(null);
   const [sseUrl, setSseUrl] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [actionBusy, setActionBusy] = useState<Action | null>(null);
+  const [actionError, setActionError] = useState<string | null>(null);
+  const [actionMsg, setActionMsg] = useState<string | null>(null);
 
   const refresh = useCallback(async () => {
     try {
@@ -29,6 +41,32 @@ export function ServerDetail() {
       setError(err instanceof Error ? err.message : "load failed");
     }
   }, [id]);
+
+  async function runAction(kind: Action) {
+    setActionBusy(kind);
+    setActionError(null);
+    setActionMsg(null);
+    try {
+      if (kind === "start") await api.enableServer(id);
+      else if (kind === "stop") await api.disableServer(id);
+      else await api.restartServer(id);
+      // Brief settle delay so the immediate refresh has a chance to see the new state
+      await new Promise((r) => setTimeout(r, 400));
+      await refresh();
+      setActionMsg(
+        kind === "start" ? "Server starting…" :
+        kind === "stop"  ? "Server stopped." :
+                           "Server restarting…"
+      );
+      // Auto-clear success message after a few seconds
+      setTimeout(() => setActionMsg(null), 4000);
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "action failed";
+      setActionError(msg);
+    } finally {
+      setActionBusy(null);
+    }
+  }
 
   useEffect(() => {
     void refresh();
@@ -44,7 +82,7 @@ export function ServerDetail() {
         <Link to="/" className="text-sm text-primary hover:underline">← Servers</Link>
         <div className="mt-1 flex items-center gap-3 flex-wrap">
           <h1 className="text-2xl font-semibold tracking-tight">{server.display_name}</h1>
-          <StatusBadge state={server.enabled ? server.state : "disabled"} />
+          <StatusBadge state={effectiveState(server)} />
           {server.doc_url && (
             <a href={server.doc_url} target="_blank" rel="noreferrer" className="text-xs text-muted-foreground hover:text-foreground inline-flex items-center gap-1">
               docs <ExternalLink className="h-3 w-3" />
@@ -104,12 +142,43 @@ export function ServerDetail() {
                 </div>
               </div>
               <div className="grid grid-cols-3 gap-2 pt-2">
-                <Button variant="outline" disabled={server.enabled} onClick={() => api.enableServer(id).then(refresh)}>Start</Button>
-                <Button variant="outline" disabled={!server.enabled} onClick={() => api.disableServer(id).then(refresh)}>Stop</Button>
-                <Button variant="outline" disabled={!server.enabled} onClick={() => api.restartServer(id).then(refresh)}>Restart</Button>
+                <Button
+                  variant="outline"
+                  disabled={server.enabled || actionBusy !== null}
+                  onClick={() => runAction("start")}
+                >
+                  {actionBusy === "start" && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
+                  {actionBusy === "start" ? "Starting…" : "Start"}
+                </Button>
+                <Button
+                  variant="outline"
+                  disabled={!server.enabled || actionBusy !== null}
+                  onClick={() => runAction("stop")}
+                >
+                  {actionBusy === "stop" && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
+                  {actionBusy === "stop" ? "Stopping…" : "Stop"}
+                </Button>
+                <Button
+                  variant="outline"
+                  disabled={!server.enabled || actionBusy !== null}
+                  onClick={() => runAction("restart")}
+                >
+                  {actionBusy === "restart" && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
+                  {actionBusy === "restart" ? "Restarting…" : "Restart"}
+                </Button>
               </div>
+              {actionMsg && (
+                <div className="text-xs text-success bg-success/10 rounded px-2 py-1">
+                  {actionMsg}
+                </div>
+              )}
+              {actionError && (
+                <div className="text-xs text-destructive border border-destructive/30 bg-destructive/5 rounded px-2 py-1">
+                  {actionError}
+                </div>
+              )}
               <div className="text-xs text-muted-foreground pt-2">
-                <span>State: <strong className="text-foreground">{server.state}</strong></span>
+                <span>State: <strong className="text-foreground">{effectiveState(server)}</strong></span>
                 {server.pid && <span className="ml-3">PID: {server.pid}</span>}
                 {server.uptime_seconds > 0 && <span className="ml-3">Uptime: {Math.round(server.uptime_seconds)}s</span>}
               </div>

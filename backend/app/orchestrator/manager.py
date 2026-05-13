@@ -38,7 +38,13 @@ class Orchestrator:
         self._proxy_state: str = "stopped"
         self._proxy_started_at: float | None = None
         self._failures: deque[float] = deque(maxlen=5)
+        # Servers the user has enabled (intended config).
         self._known_server_ids: set[str] = set()
+        # Servers we believe are reachable through the proxy. Persists across
+        # brief proxy restarts during reconciles so that toggling one server
+        # doesn't flap the status of all the others. Cleared only on permanent
+        # proxy failure or when a server is removed from _known_server_ids.
+        self._running_servers: set[str] = set()
         self._http: httpx.AsyncClient | None = None
 
     # ---- lifecycle ----
@@ -81,16 +87,24 @@ class Orchestrator:
         self._buffer(server_id).unsubscribe(queue)
 
     def runtime_status(self, server_id: str) -> dict[str, Any]:
-        in_enabled_set = server_id in self._known_server_ids
-        if not in_enabled_set:
+        if server_id not in self._known_server_ids:
             return {"state": "disabled", "pid": None, "uptime_seconds": 0}
-        if self._proxy_state == "running":
-            uptime = int(time.time() - self._proxy_started_at) if self._proxy_started_at else 0
-            return {"state": "running", "pid": self._proc.pid if self._proc else None, "uptime_seconds": uptime}
-        if self._proxy_state == "starting":
-            return {"state": "starting", "pid": None, "uptime_seconds": 0}
         if self._proxy_state == "failed":
             return {"state": "failed", "pid": None, "uptime_seconds": 0}
+        # Optimistic running: if we believe this server is reachable, report
+        # running even if the proxy is briefly between stop/start during a
+        # reconcile triggered by toggling another server.
+        if server_id in self._running_servers:
+            if self._proxy_state == "running":
+                uptime = int(time.time() - self._proxy_started_at) if self._proxy_started_at else 0
+                pid = self._proc.pid if self._proc else None
+                return {"state": "running", "pid": pid, "uptime_seconds": uptime}
+            # Proxy is in transition (stopped/starting) but this server was
+            # already running before the reconcile. Don't flap its UI.
+            return {"state": "running", "pid": None, "uptime_seconds": 0}
+        # Server is enabled but not yet known to be reachable (newly added).
+        if self._proxy_state == "starting":
+            return {"state": "starting", "pid": None, "uptime_seconds": 0}
         return {"state": "stopped", "pid": None, "uptime_seconds": 0}
 
     # ---- reconciliation ----
@@ -126,12 +140,16 @@ class Orchestrator:
         if not new_ids:
             await self._stop_proxy()
             self._known_server_ids = set()
+            self._running_servers = set()
             return
 
         write_proxy_config(self.config_path, config)
 
         # If proxy is already running with the same set of servers, just restart to pick up config changes.
         await self._stop_proxy()
+        # Drop any disabled servers from the optimistic running set, but keep
+        # the rest so their UI doesn't flap to "starting" during this brief restart.
+        self._running_servers &= new_ids
         self._known_server_ids = new_ids
         await self._start_proxy(bearer)
 
@@ -155,7 +173,8 @@ class Orchestrator:
         recent = [t for t in self._failures if now - t < 300]
         if len(recent) >= 5:
             self._proxy_state = "failed"
-            log.error("mcp-proxy: too many failures in 5min window — staying failed")
+            self._running_servers = set()  # permanent failure invalidates optimistic state
+            log.error("mcp-proxy: too many failures in 5min window, staying failed")
             return
 
         argv = [
@@ -185,10 +204,12 @@ class Orchestrator:
         if await self._wait_for_ready(timeout=15.0):
             self._proxy_state = "running"
             self._proxy_started_at = time.time()
+            self._running_servers = set(self._known_server_ids)
         else:
             log.warning("mcp-proxy did not become ready in time; continuing anyway")
             self._proxy_state = "running"
             self._proxy_started_at = time.time()
+            self._running_servers = set(self._known_server_ids)
 
     async def _wait_for_ready(self, timeout: float) -> bool:
         if not self._http:

@@ -10,6 +10,13 @@ interface Props {
   busy: boolean;
 }
 
+function effectiveState(server: ServerListItem): string {
+  if (!server.enabled) return "disabled";
+  // DB says enabled but orchestrator hasn't reconciled yet — show as transitional.
+  if (server.state === "disabled") return "starting";
+  return server.state;
+}
+
 export function ServerCard({ server, onToggle, busy }: Props) {
   const isRunning = server.enabled && server.state === "running";
   return (
@@ -25,7 +32,7 @@ export function ServerCard({ server, onToggle, busy }: Props) {
           <CardDescription className="line-clamp-2 mt-1">{server.description || "—"}</CardDescription>
         </div>
         <div className="shrink-0">
-          <StatusBadge state={server.enabled ? server.state : "disabled"} />
+          <StatusBadge state={effectiveState(server)} />
         </div>
       </CardHeader>
       <CardContent className="mt-auto flex items-center justify-between">
