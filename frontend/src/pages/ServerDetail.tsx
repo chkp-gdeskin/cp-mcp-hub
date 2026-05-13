@@ -8,6 +8,7 @@ import { StatusBadge } from "@/components/StatusBadge";
 import { ConfigForm } from "@/components/ConfigForm";
 import { LogViewer } from "@/components/LogViewer";
 import { CopyButton } from "@/components/CopyButton";
+import { ConnectSnippet } from "@/components/ConnectSnippet";
 
 type Action = "start" | "stop" | "restart";
 
@@ -183,6 +184,8 @@ export function ServerDetail() {
               )}
             </CardContent>
           </Card>
+
+          <ConnectSnippet serverId={id} sseUrl={sseUrl} token={token} />
 
           <div className="flex-1 min-h-[400px]">
             <LogViewer serverId={id} />
