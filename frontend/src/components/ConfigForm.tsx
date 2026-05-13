@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
-import { Eye, EyeOff } from "lucide-react";
-import type { EnvVarDef, ServerDetail } from "@/api/client";
+import { Eye, EyeOff, Loader2 } from "lucide-react";
+import { api, type EnvVarDef, type ServerDetail } from "@/api/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -47,15 +47,36 @@ export function ConfigForm({ server, onSave }: Props) {
   const initial = useMemo(() => initialFromServer(server), [server]);
   const [state, setState] = useState<ConfigFormState>(initial);
   const [show, setShow] = useState<Record<string, boolean>>({});
+  const [revealLoading, setRevealLoading] = useState<Record<string, boolean>>({});
+  // Maps field name -> revealed plaintext for fields the user has explicitly
+  // un-masked. Used to (a) keep the dirty check accurate so revealing alone
+  // doesn't enable Save, and (b) restore the sentinel on Discard.
+  const [revealed, setRevealed] = useState<Record<string, string>>({});
   const [saving, setSaving] = useState(false);
   const [cliText, setCliText] = useState(initial.cli_args.join(" "));
 
   // Only reset the form when navigating to a different server.
   // Without this guard, the parent's 5s polling overwrites whatever the user is typing.
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => { setState(initialFromServer(server)); setCliText(server.cli_args.join(" ")); }, [server.id]);
+  useEffect(() => {
+    setState(initialFromServer(server));
+    setCliText(server.cli_args.join(" "));
+    setRevealed({});
+    setShow({});
+  }, [server.id]);
 
-  const dirty = JSON.stringify(state) !== JSON.stringify(initial) || cliText !== initial.cli_args.join(" ");
+  // Build an "effective initial" that includes revealed plaintext for fields
+  // the user has expanded but not edited. This keeps the form clean of
+  // false-dirty state after a reveal-only interaction.
+  const effectiveInitial = useMemo(() => {
+    const cfg = { ...initial.config };
+    for (const [k, v] of Object.entries(revealed)) {
+      cfg[k] = v;
+    }
+    return { ...initial, config: cfg };
+  }, [initial, revealed]);
+
+  const dirty = JSON.stringify(state) !== JSON.stringify(effectiveInitial) || cliText !== initial.cli_args.join(" ");
 
   const missingRequired = server.definition.env_vars.filter(
     ev => ev.required && !state.config[ev.name] && (state.config[ev.name] !== SECRET_PLACEHOLDER)
@@ -65,15 +86,47 @@ export function ConfigForm({ server, onSave }: Props) {
     setState(s => ({ ...s, config: { ...s.config, [name]: value } }));
   }
 
+  async function toggleVisible(name: string) {
+    const current = state.config[name];
+    const isHiddenSentinel = current === SECRET_PLACEHOLDER;
+    // If we're about to reveal and the value is still the server-side
+    // sentinel, fetch the real plaintext from the backend first.
+    if (!show[name] && isHiddenSentinel && !revealed[name]) {
+      setRevealLoading(r => ({ ...r, [name]: true }));
+      try {
+        const r = await api.revealField(server.id, name);
+        // Stash plaintext both as the visible state and as the revealed
+        // baseline so the dirty check ignores this no-op replacement.
+        setRevealed(prev => ({ ...prev, [name]: r.value }));
+        setField(name, r.value);
+      } catch {
+        // Leave value as-is; just toggle the eye anyway so the user sees feedback
+      } finally {
+        setRevealLoading(r => ({ ...r, [name]: false }));
+      }
+    }
+    setShow(s => ({ ...s, [name]: !s[name] }));
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setSaving(true);
     try {
       const cli_args = cliText.trim().split(/\s+/).filter(Boolean);
       await onSave({ ...state, cli_args });
+      // After a save the server returns the sentinel again; reset reveal state.
+      setRevealed({});
+      setShow({});
     } finally {
       setSaving(false);
     }
+  }
+
+  function handleDiscard() {
+    setState(initial);
+    setCliText(initial.cli_args.join(" "));
+    setRevealed({});
+    setShow({});
   }
 
   return (
@@ -85,7 +138,8 @@ export function ConfigForm({ server, onSave }: Props) {
         {server.definition.env_vars.map((ev) => (
           <Field key={ev.name} def={ev} value={state.config[ev.name] ?? ""}
             visible={!!show[ev.name]}
-            onToggleVisible={() => setShow(s => ({ ...s, [ev.name]: !s[ev.name] }))}
+            revealLoading={!!revealLoading[ev.name]}
+            onToggleVisible={() => toggleVisible(ev.name)}
             onChange={(v) => setField(ev.name, v)}
           />
         ))}
@@ -126,7 +180,7 @@ export function ConfigForm({ server, onSave }: Props) {
 
       <div className="flex gap-2">
         <Button type="submit" disabled={!dirty || saving}>{saving ? "Saving…" : "Save changes"}</Button>
-        <Button type="button" variant="outline" disabled={!dirty || saving} onClick={() => { setState(initial); setCliText(initial.cli_args.join(" ")); }}>
+        <Button type="button" variant="outline" disabled={!dirty || saving} onClick={handleDiscard}>
           Discard
         </Button>
       </div>
@@ -138,11 +192,12 @@ interface FieldProps {
   def: EnvVarDef;
   value: Value;
   visible: boolean;
+  revealLoading?: boolean;
   onToggleVisible: () => void;
   onChange: (v: Value) => void;
 }
 
-function Field({ def, value, visible, onToggleVisible, onChange }: FieldProps) {
+function Field({ def, value, visible, revealLoading, onToggleVisible, onChange }: FieldProps) {
   if (def.type === "boolean") {
     return (
       <div className="flex items-start justify-between gap-4">
@@ -171,11 +226,12 @@ function Field({ def, value, visible, onToggleVisible, onChange }: FieldProps) {
           onChange={(e) => onChange(e.target.value)}
         />
         {isPassword && (
-          <button type="button" onClick={onToggleVisible}
-            className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+          <button type="button" onClick={onToggleVisible} disabled={revealLoading}
+            className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground disabled:opacity-50"
             aria-label={visible ? "Hide value" : "Show value"}
+            title={visible ? "Hide value" : (String(value) === SECRET_PLACEHOLDER ? "Click to reveal saved value" : "Show value")}
           >
-            {visible ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+            {revealLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : visible ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
           </button>
         )}
       </div>

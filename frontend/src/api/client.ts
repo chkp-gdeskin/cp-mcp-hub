@@ -108,6 +108,8 @@ export const api = {
   getServer: (id: string) => req<ServerDetail>(`/api/servers/${id}`),
   updateConfig: (id: string, body: { config: Record<string, unknown>; cli_args: string[]; telemetry_enabled: boolean; restart_policy: string }) =>
     req<{ ok: true }>(`/api/servers/${id}/config`, { method: "PUT", body: JSON.stringify(body) }),
+  revealField: (id: string, fieldName: string) =>
+    req<{ value: string }>(`/api/servers/${id}/config/reveal/${encodeURIComponent(fieldName)}`),
   enableServer: (id: string) => req<{ ok: true }>(`/api/servers/${id}/enable`, { method: "POST" }),
   disableServer: (id: string) => req<{ ok: true }>(`/api/servers/${id}/disable`, { method: "POST" }),
   restartServer: (id: string) => req<{ ok: true }>(`/api/servers/${id}/restart`, { method: "POST" }),

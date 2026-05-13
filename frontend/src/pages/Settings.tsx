@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
-import { Copy } from "lucide-react";
 import { api } from "@/api/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { CopyButton } from "@/components/CopyButton";
 
 export function Settings() {
   const [token, setToken] = useState<string | null>(null);
@@ -60,7 +60,7 @@ export function Settings() {
         <CardContent className="space-y-3">
           <div className="flex gap-2 items-center">
             <code className="flex-1 truncate bg-muted px-2 py-1 rounded text-xs font-mono">{token ?? ""}</code>
-            <Button size="icon" variant="ghost" onClick={() => token && navigator.clipboard.writeText(token)}><Copy className="h-4 w-4" /></Button>
+            <CopyButton value={token} label="Copy bearer token" />
           </div>
           {rotatedAt && <p className="text-xs text-muted-foreground">Last rotated: {new Date(rotatedAt).toLocaleString()}</p>}
           <Button variant="destructive" onClick={() => setConfirmRotate(true)}>Rotate token</Button>

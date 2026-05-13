@@ -197,6 +197,39 @@ async def restart_server(server_id: str, request: Request, db: AsyncSession = De
     return {"ok": True}
 
 
+@router.get("/{server_id}/config/reveal/{field_name}")
+async def reveal_secret(
+    server_id: str,
+    field_name: str,
+    db: AsyncSession = Depends(get_db),
+    _uid: int = Depends(require_user),
+):
+    """Return the plaintext of a single stored secret field.
+
+    Distinct from the regular GET /{server_id} which always masks secrets.
+    Calling this requires an authenticated session. Designed for the
+    admin's own UI to verify a saved value without re-entering it.
+    """
+    defn = get_server_def(server_id)
+    if not defn:
+        raise HTTPException(status_code=404, detail="unknown server")
+    env_def = next((ev for ev in defn.env_vars if ev.name == field_name), None)
+    if env_def is None or not env_def.secret:
+        raise HTTPException(status_code=404, detail="unknown secret field")
+    state = await db.get(ServerState, server_id)
+    if state is None:
+        raise HTTPException(status_code=404, detail="server state not initialized")
+    stored = (state.config or {}).get(field_name)
+    if not stored:
+        # Field has no saved value; nothing to reveal
+        return {"value": ""}
+    try:
+        plaintext = decrypt(stored)
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail="failed to decrypt field; MASTER_KEY may have changed") from exc
+    return {"value": plaintext}
+
+
 @router.get("/{server_id}/status")
 async def server_status(server_id: str, request: Request, _uid: int = Depends(require_user)):
     defn = get_server_def(server_id)
