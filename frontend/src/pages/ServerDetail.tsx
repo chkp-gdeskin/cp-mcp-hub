@@ -1,12 +1,13 @@
 import { useCallback, useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { Copy, ExternalLink, Loader2 } from "lucide-react";
+import { ExternalLink, Loader2 } from "lucide-react";
 import { api, type ServerDetail as ServerDetailT } from "@/api/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { StatusBadge } from "@/components/StatusBadge";
 import { ConfigForm } from "@/components/ConfigForm";
 import { LogViewer } from "@/components/LogViewer";
+import { CopyButton } from "@/components/CopyButton";
 
 type Action = "start" | "stop" | "restart";
 
@@ -17,9 +18,6 @@ function effectiveState(server: ServerDetailT): string {
   return server.state;
 }
 
-function copy(text: string) {
-  void navigator.clipboard.writeText(text);
-}
 
 export function ServerDetail() {
   const { id = "" } = useParams();
@@ -127,18 +125,14 @@ export function ServerDetail() {
                 <p className="text-xs text-muted-foreground">SSE URL</p>
                 <div className="flex gap-2 items-center">
                   <code className="flex-1 truncate bg-muted px-2 py-1 rounded text-xs font-mono">{sseUrl ?? ""}</code>
-                  <Button size="icon" variant="ghost" onClick={() => sseUrl && copy(sseUrl)} aria-label="Copy SSE URL">
-                    <Copy className="h-4 w-4" />
-                  </Button>
+                  <CopyButton value={sseUrl} label="Copy SSE URL" />
                 </div>
               </div>
               <div className="space-y-1">
                 <p className="text-xs text-muted-foreground">Bearer token (global)</p>
                 <div className="flex gap-2 items-center">
                   <code className="flex-1 truncate bg-muted px-2 py-1 rounded text-xs font-mono">{token ?? ""}</code>
-                  <Button size="icon" variant="ghost" onClick={() => token && copy(token)} aria-label="Copy bearer token">
-                    <Copy className="h-4 w-4" />
-                  </Button>
+                  <CopyButton value={token} label="Copy bearer token" />
                 </div>
               </div>
               <div className="grid grid-cols-3 gap-2 pt-2">
