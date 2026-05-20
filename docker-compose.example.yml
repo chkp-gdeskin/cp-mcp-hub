@@ -1,6 +1,6 @@
 # Quickstart:
 #   1. Generate a master key:
-#        docker run --rm aaronroseio/cp-mcp-hub:latest generate-key
+#        docker run --rm ghcr.io/chkp-gdeskin/cp-mcp-hub:latest generate-key
 #   2. Paste it as MASTER_KEY below.
 #   3. docker compose -f docker-compose.example.yml up -d
 #   4. Open http://localhost:8090, log in as admin / admin, change the password.
@@ -11,7 +11,7 @@
 
 services:
   cp-mcp-hub:
-    image: aaronroseio/cp-mcp-hub:latest
+    image: ghcr.io/chkp-gdeskin/cp-mcp-hub:latest
     container_name: cp-mcp-hub
     restart: unless-stopped
     environment:

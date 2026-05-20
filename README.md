@@ -10,14 +10,16 @@
 </p>
 
 <p align="center">
-  <a href="https://hub.docker.com/r/aaronroseio/cp-mcp-hub"><img alt="Docker Hub" src="https://img.shields.io/badge/docker-aaronroseio%2Fcp--mcp--hub-2496ED?logo=docker&logoColor=white"></a>
+  <a href="https://github.com/users/chkp-gdeskin/packages/container/package/cp-mcp-hub"><img alt="ghcr.io" src="https://img.shields.io/badge/ghcr.io-chkp--gdeskin%2Fcp--mcp--hub-181717?logo=github&logoColor=white"></a>
+  <a href="https://github.com/chkp-arose/cp-mcp-hub"><img alt="Upstream fork" src="https://img.shields.io/badge/fork%20of-chkp--arose%2Fcp--mcp--hub-181717?logo=github&logoColor=white"></a>
   <a href="https://github.com/CheckPointSW/mcp-servers"><img alt="Upstream" src="https://img.shields.io/badge/upstream-CheckPointSW%2Fmcp--servers-181717?logo=github&logoColor=white"></a>
-  <img alt="Architecture" src="https://img.shields.io/badge/arch-amd64%20%7C%20arm64-lightgrey">
   <a href="https://github.com/chkp-arose/cp-mcp-hub/blob/main/LICENSE"><img alt="License" src="https://img.shields.io/badge/license-Apache--2.0-blue"></a>
 </p>
 
+> **Fork notice.** Community fork of [`chkp-arose/cp-mcp-hub`](https://github.com/chkp-arose/cp-mcp-hub) with UI improvements: a consolidated **"Connect all enabled servers"** panel that emits one configuration covering every enabled MCP server, a more compact server detail layout with internal scrolling for the consolidated config and live logs, and a placeholder fix for IP/hostname env vars. The pre-built image at `ghcr.io/chkp-gdeskin/cp-mcp-hub` includes these enhancements. Upstream PR: [chkp-arose/cp-mcp-hub#10](https://github.com/chkp-arose/cp-mcp-hub/pull/10).
+
 <p align="center">
-  <img src="https://raw.githubusercontent.com/chkp-arose/cp-mcp-hub/main/docs/images/dashboard.png" alt="Dashboard with servers grouped by Check Point solution pillar" width="900">
+  <img src="https://raw.githubusercontent.com/chkp-gdeskin/cp-mcp-hub/main/docs/images/dashboard.png" alt="Dashboard with servers grouped by Check Point solution pillar" width="900">
 </p>
 
 ---
@@ -65,7 +67,7 @@ You need [Docker](https://www.docker.com/products/docker-desktop/). That's it. T
 
 ```bash
 # 1. Generate a master encryption key (save this somewhere safe!)
-docker run --rm aaronroseio/cp-mcp-hub:latest generate-key
+docker run --rm ghcr.io/chkp-gdeskin/cp-mcp-hub:latest generate-key
 # prints something like: 4Te6XpFq2j8N9k...long-base64-string...=
 
 # 2. Run the hub (paste the key from step 1)
@@ -73,7 +75,7 @@ docker run -d --name cp-mcp-hub \
   -e MASTER_KEY='paste-your-key-here' \
   -v cp-mcp-hub-data:/data \
   -p 8090:8000 \
-  aaronroseio/cp-mcp-hub:latest
+  ghcr.io/chkp-gdeskin/cp-mcp-hub:latest
 
 # 3. Open the UI
 open http://localhost:8090     # macOS
@@ -95,21 +97,21 @@ open http://localhost:8090     # macOS
 <table>
 <tr>
 <td width="50%">
-<img src="https://raw.githubusercontent.com/chkp-arose/cp-mcp-hub/main/docs/images/login.png" alt="Login screen">
+<img src="https://raw.githubusercontent.com/chkp-gdeskin/cp-mcp-hub/main/docs/images/login.png" alt="Login screen">
 <br><sub><b>Login.</b> Single-user admin in v1.</sub>
 </td>
 <td width="50%">
-<img src="https://raw.githubusercontent.com/chkp-arose/cp-mcp-hub/main/docs/images/server-detail.png" alt="Server configuration, endpoint, and live logs">
-<br><sub><b>Server detail.</b> Configure env vars, copy the SSE endpoint, watch logs live.</sub>
+<img src="https://raw.githubusercontent.com/chkp-gdeskin/cp-mcp-hub/main/docs/images/server-detail.png" alt="Server detail page with Configuration, Endpoint, Connect this server, Connect all enabled servers, and Live logs">
+<br><sub><b>Server detail.</b> Configure env vars on the left, copy connection snippets, watch logs live. The <b>Connect all enabled servers</b> panel emits one config for every enabled server at once.</sub>
 </td>
 </tr>
 <tr>
 <td width="50%">
-<img src="https://raw.githubusercontent.com/chkp-arose/cp-mcp-hub/main/docs/images/pillar-group.png" alt="Servers grouped by Check Point solution pillar">
-<br><sub><b>Pillar grouping.</b> Organized by Check Point's four solution pillars.</sub>
+<img src="https://raw.githubusercontent.com/chkp-gdeskin/cp-mcp-hub/main/docs/images/management-logs.png" alt="Management Logs server detail page">
+<br><sub><b>Same layout, every server.</b> Each enabled server gets its own detail page with the same Configuration / Endpoint / Connect / Logs structure. The bearer token is shared across all of them.</sub>
 </td>
 <td width="50%">
-<img src="https://raw.githubusercontent.com/chkp-arose/cp-mcp-hub/main/docs/images/settings.png" alt="Settings page with token rotation dialog">
+<img src="https://raw.githubusercontent.com/chkp-gdeskin/cp-mcp-hub/main/docs/images/settings.png" alt="Settings page with token rotation dialog">
 <br><sub><b>Settings.</b> Rotate the SSE bearer, change admin password, see system info.</sub>
 </td>
 </tr>
@@ -174,7 +176,7 @@ You should see SSE handshake data within a second or two. Ctrl+C to stop.
 
 ### Docker Compose
 
-A starter compose file is included. See [`docker-compose.example.yml`](https://github.com/chkp-arose/cp-mcp-hub/blob/main/docker-compose.example.yml). Copy it, paste your `MASTER_KEY`, then:
+A starter compose file is included. See [`docker-compose.example.yml`](https://github.com/chkp-gdeskin/cp-mcp-hub/blob/main/docker-compose.example.yml). Copy it, paste your `MASTER_KEY`, then:
 
 ```bash
 docker compose -f docker-compose.example.yml up -d
@@ -193,7 +195,7 @@ docker run -d --name cp-mcp-hub \
   -e TLS_HOSTNAMES='localhost,127.0.0.1,my-server.local,192.168.1.50' \
   -v cp-mcp-hub-data:/data \
   -p 8090:8000 \
-  aaronroseio/cp-mcp-hub:latest
+  ghcr.io/chkp-gdeskin/cp-mcp-hub:latest
 ```
 
 Open `https://my-server.local:8090` in your browser. You'll get a "Not secure" warning — that's expected for a self-signed cert. Click through (Advanced → Proceed) or, for a cleaner setup, import `/data/tls/cert.pem` into your machine's trust store.
@@ -212,7 +214,7 @@ docker run -d --name cp-mcp-hub \
   -e EXTERNAL_BASE_URL='https://mcp.example.com' \
   -v cp-mcp-hub-data:/data \
   -p 8090:8000 \
-  aaronroseio/cp-mcp-hub:latest
+  ghcr.io/chkp-gdeskin/cp-mcp-hub:latest
 ```
 
 ---
@@ -270,7 +272,7 @@ docker run --rm -v cp-mcp-hub-data:/data -v "$(pwd)":/backup alpine \
 **Upgrade.** Pull and recreate. State and credentials persist in the volume.
 
 ```bash
-docker pull aaronroseio/cp-mcp-hub:latest
+docker pull ghcr.io/chkp-gdeskin/cp-mcp-hub:latest
 docker stop cp-mcp-hub && docker rm cp-mcp-hub
 # re-run the same `docker run ...` command from Quickstart step 2.
 ```
@@ -284,7 +286,7 @@ Want a reproducible build? Use a `:sha-<short>` tag instead of `:latest`.
 | Symptom | Likely cause | Fix |
 |---|---|---|
 | Container exits immediately with `FATAL: MASTER_KEY env var is required` | Forgot the env var | Re-run with `-e MASTER_KEY='...'` |
-| Container exits with `MASTER_KEY is not a valid 32-byte url-safe base64 Fernet key` | Pasted truncated or bad key | Regenerate: `docker run --rm aaronroseio/cp-mcp-hub:latest generate-key` |
+| Container exits with `MASTER_KEY is not a valid 32-byte url-safe base64 Fernet key` | Pasted truncated or bad key | Regenerate: `docker run --rm ghcr.io/chkp-gdeskin/cp-mcp-hub:latest generate-key` |
 | Health check fails / `http://localhost:8090` shows nothing | Port 8090 already in use on the host, or container still booting | Change the host side of the port mapping (e.g. `-p 9090:8000`) and open the new port, or wait ~10s and re-check |
 | Server card stuck on `Starting` | The `@chkp/*-mcp` package failed to launch | `docker logs cp-mcp-hub \| grep -i error`. Usually a missing or wrong env var on the server's config page. |
 | SSE endpoint returns 401 | Wrong or old bearer token | Re-copy from **Settings** page. Tokens are rotated by the rotate button. |
@@ -352,7 +354,7 @@ python scripts/build_manifest.py
 docker build -t cp-mcp-hub:dev .
 ```
 
-Multi-arch builds for `linux/amd64` and `linux/arm64` are published by CI on every push to `main`, every `v*` tag, and weekly.
+The pre-built image at `ghcr.io/chkp-gdeskin/cp-mcp-hub` is currently published manually from this fork (no CI yet). Upstream `chkp-arose/cp-mcp-hub` publishes multi-arch builds (`linux/amd64`, `linux/arm64`) automatically.
 
 ---
 
