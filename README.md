@@ -107,12 +107,18 @@ open http://localhost:8090     # macOS
 </tr>
 <tr>
 <td width="50%">
-<img src="https://raw.githubusercontent.com/chkp-gdeskin/cp-mcp-hub/main/docs/images/management-logs.png" alt="Management Logs server detail page">
-<br><sub><b>Same layout, every server.</b> Each enabled server gets its own detail page with the same Configuration / Endpoint / Connect / Logs structure. The bearer token is shared across all of them.</sub>
+<img src="https://raw.githubusercontent.com/chkp-gdeskin/cp-mcp-hub/main/docs/images/pillar-group.png" alt="Servers grouped by Check Point solution pillar">
+<br><sub><b>Pillar grouping.</b> Organized by Check Point's four solution pillars.</sub>
 </td>
 <td width="50%">
 <img src="https://raw.githubusercontent.com/chkp-gdeskin/cp-mcp-hub/main/docs/images/settings.png" alt="Settings page with token rotation dialog">
 <br><sub><b>Settings.</b> Rotate the SSE bearer, change admin password, see system info.</sub>
+</td>
+</tr>
+<tr>
+<td colspan="2">
+<img src="https://raw.githubusercontent.com/chkp-gdeskin/cp-mcp-hub/main/docs/images/management-logs.png" alt="Management Logs server detail page">
+<br><sub><b>Same layout, every server.</b> Each enabled server gets its own detail page with the same Configuration / Endpoint / Connect / Logs structure. The bearer token is shared across all of them.</sub>
 </td>
 </tr>
 </table>
